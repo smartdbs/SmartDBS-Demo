@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.company.dao.EmployeeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.company.model.Employee">
+        <id column="id" property="id" />
+        <result column="active" property="active" />
+        <result column="company_id" property="companyId" />
+        <result column="created_date" property="createdDate" />
+        <result column="employee_no" property="employeeNo" />
+        <result column="first_name" property="firstName" />
+        <result column="formatted_name" property="formattedName" />
+        <result column="gender" property="gender" />
+        <result column="last_name" property="lastName" />
+        <result column="modified_date" property="modifiedDate" />
+        <result column="phone" property="phone" />
+        <result column="avatar" property="avatar" />
+    </resultMap>
+
+</mapper>

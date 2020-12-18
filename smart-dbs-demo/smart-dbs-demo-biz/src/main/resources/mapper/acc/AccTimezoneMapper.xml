@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.acc.dao.AccTimezoneMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.acc.model.AccTimezone">
+        <result column="timezone_num" property="timezoneNum" />
+        <result column="timezone_name" property="timezoneName" />
+        <result column="company_id" property="companyId" />
+    </resultMap>
+
+    <select id="pageList" resultType="com.zkteco.dbs.acc.vo.AccTimezoneVO">
+        SELECT
+            a.timezone_num,
+            a.timezone_name
+        from
+            acc_timezone a
+        where
+            a.company_id = #{companyId}
+
+    </select>
+</mapper>

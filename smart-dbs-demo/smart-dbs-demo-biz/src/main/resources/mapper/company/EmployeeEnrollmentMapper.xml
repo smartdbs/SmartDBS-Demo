@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.company.dao.EmployeeEnrollmentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.company.model.EmployeeEnrollment">
+        <id column="id" property="id" />
+        <result column="card_no" property="cardNo" />
+        <result column="company_id" property="companyId" />
+        <result column="created_date" property="createdDate" />
+        <result column="device_password" property="devicePassword" />
+        <result column="device_permission" property="devicePermission" />
+        <result column="device_verify_mode" property="deviceVerifyMode" />
+        <result column="employee_id" property="employeeId" />
+        <result column="modified_date" property="modifiedDate" />
+        <result column="timezone_Id" property="timezoneId" />
+    </resultMap>
+
+    <sql id="column">
+        e.id,
+        e.employee_no ,
+        e.first_name ,
+        e.last_name ,
+        e.formatted_name ,
+        e.company_id,
+        e.avatar,
+        ee.card_no ,
+        ee.device_password ,
+        ee.device_permission
+
+    </sql>
+
+    <select id="pageList" resultType="com.zkteco.dbs.company.vo.EmployeeEnrollmentVO">
+        select
+            <include refid="column"/>
+        from
+            employee e
+        left join employee_enrollment ee on
+            e.id = ee.employee_id where e.company_id = #{companyId}
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(employeeNo)">
+            and e.employee_no =#{employeeNo}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(formattedName)">
+            and e.formatted_name =#{formattedName}
+        </if>
+        ORDER BY e.modified_date DESC
+
+    </select>
+    
+    <select id="unassignedList" resultType="com.zkteco.dbs.company.vo.EmployeeEnrollmentVO">
+        select
+            e.id,
+            e.employee_no ,
+            e.first_name ,
+            e.last_name ,
+            e.formatted_name ,
+            e.company_id,
+            e.avatar
+        from
+            employee e
+        where
+            e.employee_no
+                not in (
+                select
+                    de.employee_no
+                from
+                    device_employee de
+                where
+                de.sn = #{sn})
+            and e.company_id = #{companyId}
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(employeeNo)">
+            and e.employee_no =#{employeeNo}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(formattedName)">
+            and e.formatted_name =#{formattedName}
+        </if>
+        ORDER BY e.modified_date DESC
+
+    </select>
+
+</mapper>

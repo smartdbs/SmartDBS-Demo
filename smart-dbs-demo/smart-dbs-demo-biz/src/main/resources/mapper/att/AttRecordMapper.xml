@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.att.dao.AttRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.att.vo.AttRecordVO"/>
+    <resultMap id="ExcelResultMap" type="com.zkteco.dbs.att.vo.AttRecordExcel"/>
+    <sql id="column">
+        a.id,
+        a.check_in_time as checkInTime,
+        a.company_id as companyId,
+        a.iso_check_in_time as isoCheckInTime,
+        a.employee_no as employeeNo,
+        a.sn,
+        d.alias,
+        e.formatted_name as formattedName
+    </sql>
+
+    <sql id="excelColumn">
+        a.iso_check_in_time as isoCheckInTime,
+        a.employee_no as employeeNo,
+        a.sn,
+        d.alias,
+        e.formatted_name as formattedName
+    </sql>
+
+    <select id="pageListSql" resultMap="BaseResultMap">
+        select
+        <include refid="column"/>
+        from att_record a
+        left join employee e on e.employee_no = a.employee_no
+        left join device d on d.sn = a.sn
+        where 1=1
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and a.company_id = #{params.companyId}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and a.sn = #{params.sn}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.alias)">
+            and d.alias = #{params.alias}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.employeeNo)">
+            and a.employee_no = #{params.employeeNo}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.formattedName)">
+            and e.formatted_name = #{params.formattedName}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.startTime)">
+            and a.check_in_time <![CDATA[ >= ]]> #{params.startTime}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.endTime)">
+            and a.check_in_time <![CDATA[ <= ]]> #{params.endTime}
+        </if>
+        ORDER BY a.check_in_time DESC
+    </select>
+
+    <select id="listSql" resultMap="ExcelResultMap">
+        select
+        <include refid="excelColumn"/>
+        from att_record a
+        left join employee e on e.employee_no = a.employee_no
+        left join device d on d.sn = a.sn
+        where 1=1
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and a.company_id = #{params.companyId}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and a.sn = #{params.sn}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.alias)">
+            and d.alias = #{params.alias}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.employeeNo)">
+            and a.employee_no = #{params.employeeNo}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.formattedName)">
+            and e.formatted_name = #{params.formattedName}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.startTime)">
+            and a.check_in_time <![CDATA[ >= ]]> #{params.startTime}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.endTime)">
+            and a.check_in_time <![CDATA[ <= ]]> #{params.endTime}
+        </if>
+        ORDER BY a.check_in_time DESC
+    </select>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.acc.dao.AccAuthorityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.acc.model.AccAuthority">
+        <result column="group_num" property="groupNum"/>
+        <result column="name" property="name"/>
+        <result column="timezone_num" property="timezoneNum"/>
+        <result column="company_id" property="companyId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+    </resultMap>
+
+
+    <select id="doorAllocatedList" resultType="com.zkteco.dbs.acc.vo.AccAuthorityDoorVO">
+
+        select
+        a.*
+        from
+        (
+        select
+        ad.id as doorId, ad.door_name , ad.door_num , d.id as devId ,d.alias, d.sn, d.status
+        from
+        acc_door ad
+        left join device d on
+        ad.sn = d.sn
+        where
+        ad.company_id = #{companyId}
+        )a
+        where
+        a.doorId in (
+        select
+        aad.door_id
+        from
+        acc_authority_door aad
+        where
+        aad.group_num = #{groupNum})
+
+    </select>
+
+    <select id="doorUnassignedList" resultType="com.zkteco.dbs.acc.vo.AccAuthorityDoorVO">
+
+        select
+        a.*
+        from
+        (
+        select
+        ad.id as doorId, ad.door_name , ad.door_num , d.id as devId ,d.alias, d.sn, d.status
+        from
+        acc_door ad
+        left join device d on
+        ad.sn = d.sn
+        where
+        ad.company_id = #{companyId}
+        )a
+        where
+        a.doorId not in (
+        select
+        aad.door_id
+        from
+        acc_authority_door aad
+        where
+        aad.group_num = #{params.groupNum})
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.doorName)">
+            and a.door_name =#{params.doorName}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.alias)">
+            and a.alias =#{params.alias}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and a.sn =#{params.sn}
+        </if>
+
+    </select>
+
+    <select id="employeeAllocatedList" resultType="com.zkteco.dbs.acc.vo.AccAuthorityEmployeeVO">
+        select
+        e.id as employeeId,
+        e.employee_no as employeeNo,
+        e.formatted_name as formattedName,
+        e.avatar
+        from
+        employee e
+        where
+        e.id in(
+        select
+        aae.employee_id
+        from
+        acc_authority_employee aae where aae.group_num=#{params.groupNum})
+        and e.company_id = #{companyId}
+
+    </select>
+
+    <select id="employeeUnassignedList" resultType="com.zkteco.dbs.acc.vo.AccAuthorityEmployeeVO">
+        select
+        e.id as employeeId,
+        e.employee_no as employeeNo,
+        e.formatted_name as formattedName,
+        e.avatar
+        from
+        employee e
+        where
+        e.id not in(
+        select
+        aae.employee_id
+        from
+        acc_authority_employee aae where aae.group_num=#{params.groupNum})
+        and e.company_id = #{companyId}
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.employeeNo)">
+            and e.employee_no =#{params.employeeNo}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.formattedName)">
+            and e.formatted_name =#{params.formattedName}
+        </if>
+
+    </select>
+
+    <select id="getCountBySnAndEmployeeNoAndGroupNum" resultType="long">
+        SELECT count(*) as count FROM acc_authority_employee ae, acc_authority_door ad, acc_authority a
+        WHERE ae.group_num = ad.group_num
+        AND ae.group_num = a.group_num
+        AND a.company_id =#{params.companyId}
+        AND ae.employee_no =#{params.employeeNo}
+        AND ad.sn =#{params.sn}
+        AND <![CDATA[a.group_num !=#{params.groupNum}]]>
+    </select>
+
+</mapper>

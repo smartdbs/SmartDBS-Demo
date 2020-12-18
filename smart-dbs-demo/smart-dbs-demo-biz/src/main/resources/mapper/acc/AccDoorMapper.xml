@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.acc.dao.AccDoorMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.acc.model.AccDoor">
+        <id column="id" property="id" />
+        <result column="door_num" property="doorNum" />
+        <result column="door_name" property="doorName" />
+        <result column="sn" property="sn" />
+        <result column="company_id" property="companyId" />
+    </resultMap>
+
+
+    <select id="pageList" resultType="com.zkteco.dbs.acc.vo.AccDoorVO">
+        select
+            ad.id,
+            ad.door_name ,
+            d.alias ,
+            d.sn ,
+            d.status
+        from
+            acc_door ad
+        left join device d on
+            ad.sn = d.sn
+        where
+            ad.company_id = #{companyId}
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.doorName)">
+            and ad.door_name =#{params.doorName}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.alias)">
+            and d.alias =#{params.alias}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and d.sn =#{params.sn}
+        </if>
+
+    </select>
+
+</mapper>

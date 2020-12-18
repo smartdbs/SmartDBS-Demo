@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.device.dao.DeviceEmployeeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.device.vo.DeviceEmployeeVO"/>
+
+    <sql id="listColumn">
+        de.sn,
+        de.employee_no as employeeNo,
+        de.company_id as companyId,
+        e.formatted_name as formattedName,
+        e.avatar
+    </sql>
+
+    <select id="listSql" resultMap="BaseResultMap">
+        select
+        <include refid="listColumn"/>
+        from device_employee de left join employee e on e.employee_no = de.employee_no
+        where 1=1
+        and de.sn =#{params.sn}
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and de.company_id =#{params.companyId}
+        </if>
+        ORDER BY de.modified_date DESC
+    </select>
+
+</mapper>

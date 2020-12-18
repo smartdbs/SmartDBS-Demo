@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.device.dao.DeviceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.device.vo.DeviceVO">
+        <id column="id" property="id"/>
+        <result column="company_id" property="companyId"/>
+        <result column="alias" property="alias"/>
+        <result column="sn" property="sn"/>
+        <result column="status" property="status"/>
+        <result column="active" property="active"/>
+        <result column="type" property="type"/>
+        <result column="enable" property="enable"/>
+        <result column="fw_version" property="fwVersion"/>
+        <result column="model" property="model"/>
+        <result column="ip_address" property="ipAddress"/>
+        <result column="local_ip" property="localIp"/>
+        <result column="protocol" property="protocol"/>
+        <result column="mac" property="mac"/>
+    </resultMap>
+
+    <sql id="column">
+        d.id,
+        d.company_id,
+        d.alias,
+        d.sn,
+        d.status,
+        d.type,
+        d.active,
+        d.enable,
+        d.fw_version,
+        d.model,
+        d.ip_address,
+        d.local_ip,
+        d.protocol,
+        d.mac
+    </sql>
+
+    <select id="pageListSql" resultMap="BaseResultMap">
+        select
+        <include refid="column"/>
+        from device d
+        where 1=1
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and d.company_id = #{params.companyId}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.type)">
+            and d.type = #{params.type}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and d.sn = #{params.sn}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.alias)">
+            and d.alias = #{params.alias}
+        </if>
+        ORDER BY d.created_date DESC
+    </select>
+
+    <select id="listByEmployee" resultMap="BaseResultMap">
+        select
+        <include refid="column"/>
+        from device d left join device_employee de on de.sn = d.sn
+        where d.company_id = #{params.companyId}
+        and de.employee_no = #{params.employeeNo}
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and de.company_id =#{params.companyId}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.supportRemoteFacePhoto)">
+            and d.support_remote_face_photo =#{params.supportRemoteFacePhoto}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.supportRemoteFinger)">
+            and d.support_remote_finger =#{params.supportRemoteFinger}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.supportRemotePalmPrint)">
+            and d.support_remote_palm_print =#{params.supportRemotePalmPrint}
+        </if>
+        ORDER BY d.created_date DESC
+    </select>
+
+</mapper>

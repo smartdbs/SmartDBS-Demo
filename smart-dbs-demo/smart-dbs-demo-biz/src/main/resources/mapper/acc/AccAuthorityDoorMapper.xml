@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.acc.dao.AccAuthorityDoorMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.acc.model.AccAuthorityDoor">
+        <id column="id" property="id" />
+        <result column="group_num" property="groupNum" />
+        <result column="door_id" property="doorId" />
+        <result column="dev_id" property="devId" />
+        <result column="door_num" property="doorNum" />
+        <result column="sn" property="sn" />
+    </resultMap>
+
+</mapper>
