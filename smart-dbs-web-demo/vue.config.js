@@ -1,7 +1,7 @@
 let path = require('path')
 const Happypack = require('happypack')
 const { IgnorePlugin } = require('webpack')
-// const packageConfig = require('./package.json')
+const packageConfig = require('./package.json')
 function resolve(dir) {
   // path.join()方法用于连接路径
   return path.join(__dirname, dir)
@@ -47,7 +47,7 @@ module.exports = {
     hotOnly: false,
     proxy: {
       '/api': {
-        target: target,
+        target: packageConfig.serviceUrl,
         changeOrigin: true,
         ws: true,
         pathRewrite: {
@@ -55,7 +55,7 @@ module.exports = {
         }
       },
       '/temp': {
-        target: target,
+        target: packageConfig.serviceUrl,
         changeOrigin: true,
         ws: true,
         pathRewrite: {}
