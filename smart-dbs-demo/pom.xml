@@ -19,17 +19,4 @@
         <module>smart-dbs-demo-startup</module>
     </modules>
 
-    <distributionManagement>
-        <repository>
-            <id>zkteco-internal-repository</id>
-            <name>zkteco-internal-repository-releases</name>
-            <url>http://mvnrepo.dev.xmzkteco.com:8080/artifactory/zkteco-internal-repository</url>
-        </repository>
-        <snapshotRepository>
-            <id>zkteco-internal-repository</id>
-            <name>zkteco-internal-repository-snapshots</name>
-            <url>http://mvnrepo.dev.xmzkteco.com:8080/artifactory/zkteco-internal-repository</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>
