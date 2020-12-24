@@ -2,8 +2,8 @@
   <topDownLayout>
     <div class="top-bar-cla" slot="top">
       <a-tabs v-model="activeKey">
-        <a-tab-pane :key="1" :tab="$t('acc.timeSlot')"> </a-tab-pane>
         <a-tab-pane :key="2" :tab="$t('acc.permissionCroup')"></a-tab-pane>
+        <a-tab-pane :key="1" :tab="$t('acc.timeSlot')"> </a-tab-pane>
 
         <a-button
           @click.stop="$refs['timeSlot'].showCreate()"
@@ -40,7 +40,7 @@ import timeSlot from './doorSeeting/timeSlot'
 export default {
   data() {
     return {
-      activeKey: 1
+      activeKey: 2
     }
   },
   components: {

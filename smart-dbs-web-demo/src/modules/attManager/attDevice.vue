@@ -42,6 +42,7 @@
       @ok="bindSubmit"
     >
       <a-table
+        style="height: 400px;overflow: auto;"
         :pagination="false"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,

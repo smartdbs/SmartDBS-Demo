@@ -9,14 +9,20 @@
     <div class="logo" />
 
     <!-- :default-selected-keys="selectedKeys" -->
+    <!-- @openChange="menuChange"
+        :default-selected-keys="selectedKeys"
+        :openKeys="openKeys" 
+           @select="selectMenu"-->
     <div class="menu-cla">
       <a-menu
         :inline-collapsed="collapsed"
         @click="menuClick"
-        @openChange="menuChange"
-        :default-selected-keys="selectedKeys"
         theme="light"
         mode="inline"
+        @select="selectMenu"
+        @openChange="menuChange"
+        :default-selected-keys="selectedKeys"
+        :default-open-keys="defaultOpenKeys"
       >
         <template v-for="item of menuData">
           <a-sub-menu
@@ -40,8 +46,8 @@
                 v-if="childredItem.meta.icon"
                 :type="childredItem.meta.icon"
               />
-              <span>{{ getMenuName(childredItem) }}</span></a-menu-item
-            >
+              <span>{{ getMenuName(childredItem) }}</span>
+            </a-menu-item>
           </a-sub-menu>
           <a-menu-item v-else :key="item.path">
             <icon-font
@@ -69,7 +75,8 @@ export default {
     return {
       menuData: [],
       openKeys: [],
-      selectedKeys: []
+      selectedKeys: [],
+      defaultOpenKeys: []
     }
   },
   mounted() {
@@ -79,16 +86,19 @@ export default {
     this.selectedKeys = sessionStorage.getItem('keys')
       ? [sessionStorage.getItem('keys')]
       : ['/']
-    this.openKeys = sessionStorage.getItem('menu')
-      ? sessionStorage.getItem('menu')
+    this.defaultOpenKeys = sessionStorage.getItem('menu')
+      ? [sessionStorage.getItem('menu')]
       : ['/']
   },
   methods: {
+    selectMenu({ selectedKeys }) {
+      this.selectedKeys = selectedKeys
+    },
     menuChange(openKeys) {
       if (openKeys.length === 1) {
         this.openKeys = openKeys
       } else {
-        this.openKeys = openKeys[length - 1]
+        this.openKeys = openKeys[openKeys.length - 1]
       }
       sessionStorage.setItem('menu', this.openKeys)
     },

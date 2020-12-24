@@ -36,7 +36,6 @@ import {
   Col,
   Checkbox,
   Switch,
-  Steps,
   Tooltip
 } from 'ant-design-vue'
 
@@ -74,7 +73,6 @@ let components = [
   Col,
   Checkbox,
   Switch,
-  Steps,
   Tooltip
 ]
 /**

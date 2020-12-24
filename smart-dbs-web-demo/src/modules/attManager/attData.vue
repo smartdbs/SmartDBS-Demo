@@ -60,9 +60,9 @@
           show-quick-jumper
           :page-size.sync="pager.pageSize"
           :total="pager.total"
-          @change="pageChange(arguments[0], arguments[1], getDeviceList)"
+          @change="pageChange(arguments[0], arguments[1], getAttRecordList)"
           @showSizeChange="
-            pageChange(arguments[0], arguments[1], getDeviceList)
+            pageChange(arguments[0], arguments[1], getAttRecordList)
           "
         ></a-pagination>
       </div>

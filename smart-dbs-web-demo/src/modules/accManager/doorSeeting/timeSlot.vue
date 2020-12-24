@@ -50,7 +50,7 @@
       class="add-drawer-cla"
     >
       <a-form-model
-        :label-col="{ span: 5 }"
+        :label-col="{ span: 8 }"
         :wrapper-col="{ span: 14 }"
         labelAlign="left"
         :model="editFrom"
@@ -103,7 +103,7 @@
       @close="onCloseEdit()"
     >
       <a-form-model
-        :label-col="{ span: 5 }"
+        :label-col="{ span: 8 }"
         :wrapper-col="{ span: 14 }"
         labelAlign="left"
         :model="currentRow"

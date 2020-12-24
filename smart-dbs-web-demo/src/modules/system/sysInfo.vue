@@ -120,7 +120,7 @@ export default {
   }
   p {
     label {
-      width: 100px;
+      width: 135px;
       display: inline-block;
       text-align: right;
     }

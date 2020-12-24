@@ -2,14 +2,12 @@
   "name": "smart-dbs-web-demo",
   "version": "0.1.0",
   "private": true,
-  "serviceUrl": "http://demo.zkclouds.com/",
+  "serviceUrl": "http://127.0.0.1:8801/",
+  "wsUrl": "wss://127.0.0.1:8801/",
   "scripts": {
-    "build": "vue-cli-service build --mode development",
-    "demo": "vue-cli-service serve --mode  demo",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dev": "vue-cli-service serve",
-    "start": "node distStart.js ",
-    "report": "vue-cli-service build --report"
+    "dev": "vue-cli-service serve"
   },
   "dependencies": {
     "ant-design-vue": "^1.7.2",

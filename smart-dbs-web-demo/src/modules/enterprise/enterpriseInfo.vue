@@ -1,11 +1,13 @@
 <template>
   <div class="enterprise-info-cla">
     <a-form-model
-      :form="companyInfo"
+      :model="companyInfo"
       layout="horizontal"
-      :label-col="{ span: 2 }"
+      :label-col="{ span: 3 }"
       :wrapper-col="{ span: 8 }"
       labelAlign="left"
+      :rules="rules"
+      ref="companyForm"
     >
       <div class="base-info-cla">{{ $t('company.baseInfo') }}</div>
 
@@ -52,7 +54,10 @@
 export default {
   data() {
     return {
-      companyInfo: {}
+      companyInfo: {},
+      rules: {
+        companyName: [{ required: true, message: '请输入内容', tigger: 'blur' }]
+      }
     }
   },
   mounted() {
@@ -71,16 +76,20 @@ export default {
         })
     },
     updateCompanyInfo() {
-      this.request('updateCompanyInfo', this.companyInfo)
-        .then(data => {
-          if (data.code === '00') {
-            this.successMessage()
-            this.getCompanyInfo()
-          } else {
-            this.errorMessage(data.message)
-          }
-        })
-        .catch(e => this.errorMessage(e))
+      this.$refs.companyForm.validate(valid => {
+        if (valid) {
+          this.request('updateCompanyInfo', this.companyInfo)
+            .then(data => {
+              if (data.code === '00') {
+                this.successMessage()
+                this.getCompanyInfo()
+              } else {
+                this.errorMessage(data.message)
+              }
+            })
+            .catch(e => this.errorMessage(e))
+        }
+      })
     }
   }
 }
@@ -91,15 +100,17 @@ export default {
   padding: 20px;
 }
 .verify-info-cla {
-  height: 20;
+  height: 20px;
   line-height: 20px;
   border-left: 5px solid @error-color;
   padding-left: 10px;
+  margin-bottom: 24px;
 }
 .base-info-cla {
-  height: 20;
+  height: 20px;
   line-height: 20px;
   border-left: 5px solid @primary-color;
   padding-left: 10px;
+  margin-bottom: 24px;
 }
 </style>

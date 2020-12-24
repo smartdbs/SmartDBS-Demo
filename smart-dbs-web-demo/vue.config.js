@@ -2,12 +2,11 @@ let path = require('path')
 const Happypack = require('happypack')
 const { IgnorePlugin } = require('webpack')
 const packageConfig = require('./package.json')
+console.log('后端地址-->', packageConfig.serviceUrl)
 function resolve(dir) {
   // path.join()方法用于连接路径
   return path.join(__dirname, dir)
 }
-let target = process.env.VUE_APP_API_URL
-console.log('后端地址--->', target)
 module.exports = {
   productionSourceMap: true,
   chainWebpack: config => {

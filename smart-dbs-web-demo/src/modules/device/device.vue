@@ -139,7 +139,7 @@
           ref="addRuleForm"
           :model="addFrom"
           :rules="rules"
-          :label-col="{ span: 5 }"
+          :label-col="{ span: 6 }"
           :wrapper-col="{ span: 14 }"
           labelAlign="left"
         >
@@ -182,7 +182,7 @@
       >
         <div class="base-info-cla">{{ $t('device.deviceInfo') }}</div>
         <a-form-model
-          :label-col="{ span: 5 }"
+          :label-col="{ span: 8 }"
           :wrapper-col="{ span: 14 }"
           labelAlign="left"
         >
@@ -204,7 +204,7 @@
         </a-form-model>
         <div class="network-info-cla">{{ $t('device.networkInfo') }}</div>
         <a-form-model
-          :label-col="{ span: 5 }"
+          :label-col="{ span: 8 }"
           :wrapper-col="{ span: 14 }"
           labelAlign="left"
         >
@@ -402,7 +402,7 @@ export default {
     },
     rebootFn(record) {
       this.$confirm({
-        title: '此操作将重启设备，是否继续？',
+        title: this.$t('device.rebortDevice'),
         content: '',
         okText: this.$t('common.okText'),
         cancelText: this.$t('common.cancelText'),

@@ -15,7 +15,7 @@
 * 第六部：开发完成之后，执行 npm run build 命令编译生产环境，根目录下生产dist文件即前端开发环境代码。
 
 ## 后端服务地址配置
-    在根目录下，找到package.json ，修改内容中的serviceUrl，为您的后端服务地址serviceUrl,
+    在根目录下，找到package.json ，修改内容中的serviceUrl和wsUrl，为您的后端服务地址serviceUrl和websocket,
 
 ## 安装项目依赖，执行以下命令
 ```
@@ -30,17 +30,6 @@ npm run dev
 ```
 npm run build
 ```
-
-## 生成包含打包分析文件，执行以下命令
-```
-npm run report
-```
-
-## 测试打包之后的文件，执行以下命令
-```
-npm run start
-```
-
 ## 自动修复格式化，执行以下命令
 ```
 npm run lint

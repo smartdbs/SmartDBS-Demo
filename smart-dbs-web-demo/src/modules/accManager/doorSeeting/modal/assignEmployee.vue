@@ -35,6 +35,7 @@
       }"
       rowKey="id"
       tableLayout="fixed"
+      style="height: 400px;overflow: auto;"
     >
       <div slot="status" slot-scope="record">
         <span
@@ -110,6 +111,8 @@ export default {
         .then(data => {
           if (data.code === '00') {
             this.tableData = data.data
+          } else {
+            this.errorMessage(data.message)
           }
         })
         .catch(e => this.errorMessage(e))

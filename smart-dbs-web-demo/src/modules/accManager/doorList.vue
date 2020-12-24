@@ -109,7 +109,7 @@
       @close="onClose"
     >
       <a-form-model
-        :label-col="{ span: 5 }"
+        :label-col="{ span: 6 }"
         :wrapper-col="{ span: 14 }"
         labelAlign="left"
       >
@@ -131,6 +131,116 @@
         <a-button @click.stop="submitUpdate" type="primary">
           {{ $t('common.okText') }}
         </a-button>
+      </div>
+    </a-drawer>
+    <a-drawer
+      placement="right"
+      :closable="false"
+      :visible="settingVisible"
+      :width="500"
+      class="edit-drawer-cla"
+      @close="closeSettingDrawer"
+    >
+      <a-form-model
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 14 }"
+        labelAlign="left"
+        :model="settingForm"
+        :rules="rules"
+        ref="settingForms"
+      >
+        <div class="base-info-cla">{{ $t('door.remoteOpenDoorSetting') }}</div>
+        <a-form-model-item :label="$t('door.openDoorByPassword')">
+          <a-switch
+            @change="onChange('remoteType')"
+            :checked="settingForm.remoteType !== 0"
+          />
+          <a-tooltip placement="right">
+            <template slot="title">
+              <span>{{ $t('door.openDoorByPwdTip') }}</span>
+            </template>
+            <i class="iconfont zk-icon-wenti tooltip-cla"></i>
+          </a-tooltip>
+        </a-form-model-item>
+
+        <a-form-model-item
+          :label="$t('door.passwrodSetting')"
+          prop="password"
+          v-if="settingForm.remoteType"
+        >
+          <a-input v-model="settingForm.password" />
+        </a-form-model-item>
+
+        <div>
+          <a-button
+            @click.stop="saveDoorPassword('remote')"
+            type="primary"
+            class="operation-btn-cla"
+            v-if="settingForm.remoteType"
+          >
+            {{ $t('common.okText') }}
+          </a-button>
+
+          <a-button
+            @click.stop="clearDoorPassword"
+            type="danger"
+            class="operation-btn-cla"
+          >
+            {{ $t('door.clearDoorPassword') }}
+          </a-button>
+        </div>
+
+        <div class="base-info-cla setting-door-color">
+          {{ $t('door.openDoorByDevice') }}
+        </div>
+        <a-form-model-item :label="$t('door.tempPassword')">
+          <a-switch
+            @change="onChange('deviceType')"
+            :checked="settingForm.deviceType !== 0"
+          />
+          <a-tooltip placement="right">
+            <template slot="title">
+              <span style="display:inline-block;text-align:center">{{
+                $t('door.tempPwdTips')
+              }}</span>
+            </template>
+            <i class="iconfont zk-icon-wenti tooltip-cla"></i>
+          </a-tooltip>
+        </a-form-model-item>
+        <a-form-model-item
+          :label="$t('door.vaildTime')"
+          v-if="settingForm.deviceType"
+        >
+          <a-select v-model="settingForm.minutes">
+            <a-select-option :value="2">{{
+              $t('door.secondMinutes')
+            }}</a-select-option>
+            <a-select-option :value="5">{{
+              $t('door.fiveMinutes')
+            }}</a-select-option>
+            <a-select-option :value="10">{{
+              $t('door.tenMinutes')
+            }}</a-select-option>
+            <a-select-option :value="30">{{
+              $t('door.thirtyMinutes')
+            }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item
+          :label="$t('door.tempPassword')"
+          v-if="settingForm.deviceType"
+          prop="tempPassword"
+        >
+          <a-input v-model="settingForm.tempPassword"></a-input>
+        </a-form-model-item>
+      </a-form-model>
+      <div v-if="settingForm.deviceType">
+        <a-button
+          @click.stop="saveDoorPassword('device')"
+          type="primary"
+          class="operation-btn-cla"
+          >{{ $t('common.okText') }}</a-button
+        >
       </div>
     </a-drawer>
   </div>
@@ -225,7 +335,8 @@ export default {
       timer1: null,
       timer2: null,
       timer3: null,
-      errorMsg: ''
+      errorMsg: '',
+      record: {}
     }
   },
   mounted() {
@@ -276,12 +387,55 @@ export default {
         }
       })
     },
-
+    saveDoorPassword(type) {
+      // 设置固定密码 || 临时密码
+      let _self = this
+      if (type === 'remote') {
+        _self.$refs.settingForms.validateField('password', valid => {
+          if (!valid) {
+            let params = {
+              id: _self.settingForm.id,
+              password: _self.settingForm.password,
+              passwordType: 0
+            }
+            _self.setDoorPassword(params)
+          }
+        })
+      } else if (type === 'device') {
+        _self.$refs.settingForms.validateField('tempPassword', valid => {
+          if (!valid) {
+            let params = {
+              id: _self.settingForm.id,
+              password: _self.settingForm.tempPassword,
+              passwordType: 1,
+              minutes: _self.settingForm.minutes
+            }
+            _self.setDoorPassword(params)
+          }
+        })
+      }
+    },
+    setDoorPassword(params) {
+      // 通用设置密码接口
+      this.request('assignDoorPassword', params)
+        .then(data => {
+          if (data.code === '00') {
+            this.settingVisible = false
+            this.successMessage()
+            this.getDoorList()
+          } else {
+            this.errorMessage(data.message)
+          }
+        })
+        .catch(e => this.errorMessage(e))
+    },
     // 设置  开关
     onChange(type) {
       if (type === 'remoteType') {
         this.settingForm.remoteType = this.settingForm.remoteType === 1 ? 0 : 1
-        this.settingForm.password = ''
+        if (!this.record.password) {
+          this.settingForm.password = ''
+        }
       } else if (type === 'deviceType') {
         this.settingForm.deviceType = this.settingForm.deviceType === 1 ? 0 : 1
         this.settingForm.tempPassword = ''

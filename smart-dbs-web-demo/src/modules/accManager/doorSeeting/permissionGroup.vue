@@ -64,7 +64,7 @@
         <a-form-model-item :label="$t('common.name')" prop="name">
           <a-input v-model="addFrom.name" />
         </a-form-model-item>
-        <a-form-model-item :label="$t('acc.timezone')">
+        <a-form-model-item :label="$t('acc.timezone')" prop="timezoneNum">
           <a-select
             v-model="addFrom.timezoneNum"
             :placeholder="$t('device.selectType')"
@@ -219,17 +219,20 @@
         labelAlign="left"
         :label-col="{ span: 5 }"
         :wrapper-col="{ span: 14 }"
+        :model="editForm"
+        :rules="rules"
+        ref="editFormRef"
       >
         <!-- <a-form-model-item :label="$t('acc.groupNum')">
           <label>{{ editForm.groupNum }}</label>
         </a-form-model-item> -->
-        <a-form-model-item :label="$t('acc.groupName')">
+        <a-form-model-item :label="$t('acc.groupName')" prop="name">
           <a-input
             v-model="editForm.name"
             :placeholder="$t('acc.inputName')"
           ></a-input>
         </a-form-model-item>
-        <a-form-model-item :label="$t('acc.timezone')">
+        <a-form-model-item :label="$t('acc.timezone')" prop="timezoneNum">
           <a-select
             v-model="editForm.timezoneNum"
             :placeholder="$t('device.selectType')"
@@ -296,10 +299,17 @@ export default {
         endTime: ''
       },
       rules: {
+        name: [
+          {
+            required: true,
+            message: this.$t('acc.reqPerName'),
+            trigger: ['blur', 'change']
+          }
+        ],
         timezoneNum: [
           {
             required: true,
-            message: '请先添加门禁时间段',
+            message: this.$t('acc.reqDoorTime'),
             trigger: ['blur', 'change']
           }
         ]
@@ -339,19 +349,24 @@ export default {
       })
     },
     updateAccAuth() {
-      let params = {
-        ...this.editForm
-      }
-      this.request('updateAccAuthDoor', params)
-        .then(data => {
-          if (data.code === '00') {
-            this.successMessage()
-            this.detialVisiable = false
-          } else {
-            this.errorMessage(data.message)
+      this.$refs.editFormRef.validate(valid => {
+        if (valid) {
+          let params = {
+            ...this.editForm
           }
-        })
-        .catch(e => this.errorMessage(e))
+          this.request('updateAccAuthDoor', params)
+            .then(data => {
+              if (data.code === '00') {
+                this.successMessage()
+                this.detialVisiable = false
+                this.getAccAuthList()
+              } else {
+                this.errorMessage(data.message)
+              }
+            })
+            .catch(e => this.errorMessage(e))
+        }
+      })
     },
     deleteFn(record) {
       let _self = this
@@ -403,7 +418,8 @@ export default {
         .then(data => {
           if (data.code === '00') {
             this.employeeList = data.data
-            console.log()
+          } else {
+            this.errorMessage(data.message)
           }
         })
         .catch(e => this.errorMessage(e))
@@ -424,7 +440,7 @@ export default {
     },
     unAuthEmployee(record) {
       this.$confirm({
-        title: '此操作将进行人员解绑，是否继续?',
+        title: this.$t('att.unbindEmployee'),
         okText: this.$t('common.okText'),
         okType: 'danger',
         cancelText: this.$t('common.cancelText'),
@@ -449,7 +465,7 @@ export default {
     },
     unAssignDoor(record) {
       this.$confirm({
-        title: '此操作将进行门解绑，是否继续?',
+        title: this.$t('att.unbindDoor'),
         okText: this.$t('common.okText'),
         okType: 'danger',
         cancelText: this.$t('common.cancelText'),
@@ -515,6 +531,8 @@ export default {
                 this.addVisible = false
                 this.successMessage()
                 this.getAccAuthList()
+              } else {
+                this.errorMessage(data.message)
               }
             })
             .catch(e => this.errorMessage(e))

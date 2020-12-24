@@ -15,10 +15,10 @@
         tableLayout="fixed"
       >
         <div slot="devicePermission" slot-scope="record">
-          <span v-if="record.devicePermission === 1">{{
+          <span v-if="record.devicePermission === 14">{{
             $t('employee.deviceAdmin')
           }}</span>
-          <span>{{ $t('employee.deviceUser') }}</span>
+          <span v-else>{{ $t('employee.deviceUser') }}</span>
         </div>
         <div class="template-cla" slot="template" slot-scope="record">
           <i
@@ -103,8 +103,8 @@
           :rules="rules"
           ref="editEmployeeFrom"
           layout="horizontal"
-          :label-col="{ span: 6 }"
-          :wrapper-col="{ span: 17 }"
+          :label-col="{ span: 8 }"
+          :wrapper-col="{ span: 15 }"
           labelAlign="left"
         >
           <div class="base-info-cla">{{ $t('employee.baseInfo') }}</div>
@@ -281,7 +281,7 @@
           ref="addEmployeeFrom"
           :model="addFrom"
           :rules="rules"
-          :label-col="{ span: 4 }"
+          :label-col="{ span: 8 }"
           :wrapper-col="{ span: 14 }"
           labelAlign="left"
         >
@@ -693,7 +693,8 @@ export default {
       // console.log('socket连接成功')
     },
     error: function() {
-      // console.log('连接错误')
+      console.log('连接错误')
+      this.socket.close()
     },
     getMessage: function(msg) {
       let res = JSON.parse(msg.data)

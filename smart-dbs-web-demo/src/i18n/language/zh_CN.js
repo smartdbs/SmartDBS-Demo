@@ -40,8 +40,8 @@ export default {
     inOutState: '出入状态',
     time: '时间',
     doorNum: '门编号',
-    openWay: '开门方式',
-    openDetail: '开门详情',
+    openWay: '验证方式',
+    openDetail: '事件类型',
     open: '开门',
     setting: '设置',
     openingDoor: '开门中',
@@ -73,8 +73,8 @@ export default {
     faceRegister: '人脸登记',
     fingerRegister: '指纹登记',
     palmPrintTemplate: '掌纹',
-    faceTemplate: '人脸（近红外）',
-    visiableTemplate: '人脸（可见光）',
+    faceTemplate: '近红外',
+    visiableTemplate: '可见光',
     fingerTemplate: '指纹',
     devicePermision: '设备权限',
     remoteRegister: '远程登记',
@@ -162,16 +162,20 @@ export default {
     onLine: '在线',
     offLine: '离线',
     enable: '启用',
-    disable: '禁用'
+    disable: '禁用',
+    rebortDevice: '此操作将重启设备，是否继续？'
   },
   att: {
     employeeAuth: '人员授权',
     checkInTime: '打卡时间',
     export: '导出数据',
     distriEmployee: '分配员工',
-    unbindEmployee: '此操作将进行人员解绑，是否继续?'
+    unbindEmployee: '此操作将进行人员解绑，是否继续?',
+    unbindDoor: '此操作将进行门解绑，是否继续?'
   },
   acc: {
+    reqPerName: '请填写权限组名称',
+    reqDoorTime: '请先添加门禁时间段',
     timeSlot: '门禁时间段',
     permissionCroup: '门禁权限组',
     createTimeSlot: '新建门禁时间段',
