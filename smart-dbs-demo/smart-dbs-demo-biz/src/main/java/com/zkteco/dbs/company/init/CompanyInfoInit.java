@@ -45,7 +45,6 @@ public class CompanyInfoInit {
             CreateCompanyResponse companyResponse = responseMessage.getResults();
 
             Company newCompany = new Company();
-            newCompany.setId(companyResponse.getCompanyId());
             newCompany.setActive(true);
             newCompany.setAppKey(dbsConfig.getAppKey());
             newCompany.setCompanyCode("demo");
