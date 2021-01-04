@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,7 +81,23 @@ public class AccAuthorityServiceImpl extends ServiceImpl<AccAuthorityMapper, Acc
         String companyId = company.getId();
 
         IPage<AccAuthority> pageList = this.page(page, new LambdaQueryWrapper<AccAuthority>().eq(AccAuthority::getCompanyId, companyId));
+        pageList.getRecords().forEach(entity -> {
+            String startTime = entity.getStartTime();
+            String endTime = entity.getEndTime();
+            if(StringUtils.isNotBlank(startTime)){
+                int idx = startTime.indexOf("+");
+                entity.setStartTime(startTime.substring(0,idx));
+            }else{
+                entity.setStartTime(null);
+            }
+            if(StringUtils.isNotBlank(endTime)){
+                int idx = endTime.indexOf("+");
+                entity.setEndTime(endTime.substring(0,idx));
+            }else{
+                entity.setEndTime(null);
+            }
 
+        });
         return pageList;
     }
 
@@ -93,8 +111,8 @@ public class AccAuthorityServiceImpl extends ServiceImpl<AccAuthorityMapper, Acc
         String companyId = company.getId();
 
         AccAuthority entity = dto.getPayload();
-        entity.setStartTime(entity.getStartTime() + offset);
-        entity.setEndTime(entity.getEndTime() + offset);
+        entity.setStartTime(StringUtils.isNotBlank(entity.getStartTime())?entity.getStartTime() + offset : null);
+        entity.setEndTime(StringUtils.isNotBlank(entity.getEndTime())?entity.getEndTime() + offset : null);
         entity.setCompanyId(companyId);
 
         this.save(entity);
@@ -125,8 +143,8 @@ public class AccAuthorityServiceImpl extends ServiceImpl<AccAuthorityMapper, Acc
         String companyId = company.getId();
 
         entity.setCompanyId(companyId);
-        entity.setStartTime(entity.getStartTime() + offset);
-        entity.setEndTime(entity.getEndTime() + offset);
+        entity.setStartTime(StringUtils.isNotBlank(entity.getStartTime())?entity.getStartTime() + offset : null);
+        entity.setEndTime(StringUtils.isNotBlank(entity.getEndTime())?entity.getEndTime() + offset : null);
 
         this.updateById(entity);
 
