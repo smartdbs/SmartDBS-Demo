@@ -21,6 +21,8 @@
                 :class="{ 'disable-cla': false }"
                 :key="item"
                 v-for="item of 24"
+                class="time-cla"
+                @click.stop="selectTime(arguments[0], item, 'startHour')"
               >
                 {{ showValue(item - 1) }}
               </li>
@@ -35,6 +37,8 @@
                 :class="{ 'disable-cla': false }"
                 :key="item"
                 v-for="item of 60"
+                class="time-cla"
+                @click.stop="selectTime(arguments[0], item, 'startMinute')"
               >
                 {{ showValue(item - 1) }}
               </li>
@@ -52,6 +56,8 @@
                 :class="{ 'disable-cla': false }"
                 :key="item"
                 v-for="item of 24"
+                class="time-cla"
+                @click.stop="selectTime(arguments[0], item, 'endHour')"
               >
                 {{ showValue(item - 1) }}
               </li>
@@ -63,6 +69,8 @@
                 :class="{ 'disable-cla': false }"
                 :key="item"
                 v-for="item of 60"
+                class="time-cla"
+                @click.stop="selectTime(arguments[0], item, 'endMinute')"
               >
                 {{ showValue(item - 1) }}
               </li>
@@ -87,6 +95,40 @@ export default {
     }
   },
   methods: {
+    selectTime(e, item, type) {
+      let res = item - 1
+      let value = res < 10 ? '0' + res : '' + res
+      if (type === 'startHour') {
+        if (isNaN(parseInt(this.startMinute))) {
+          this.startMinute = '00'
+        }
+        // console.log('元素可见区域高', this.$refs.startHour.offsetHeight)
+        // console.log('元素可见区域高', this.$refs.startHour.scrollTop)
+        // let curEl = e.target.offsetTop / 20
+        // console.log('元素li：', curEl)
+        this.startHour = value
+      }
+      if (type == 'startMinute') {
+        if (isNaN(parseInt(this.startHour))) {
+          this.startHour = '00'
+        }
+        this.startMinute = value
+      }
+      if (type == 'endHour') {
+        if (isNaN(parseInt(this.endMinute))) {
+          this.endMinute = '00'
+        }
+        this.endHour = value
+      }
+
+      if (type == 'endMinute') {
+        if (isNaN(parseInt(this.endHour))) {
+          this.endHour = '00'
+        }
+        this.endMinute = value
+      }
+      this.$emit('input', [this.startValue, this.endValue])
+    },
     scrollFn(e, type) {
       setTimeout(() => {
         let value = Math.round(e.target.scrollTop / 20)
@@ -331,6 +373,12 @@ export default {
       width: 50px;
       height: 20px;
       line-height: 20px;
+    }
+    .time-cla {
+      cursor: pointer;
+      &:hover {
+        background: rgba(77, 178, 47, 0.3);
+      }
     }
   }
 }

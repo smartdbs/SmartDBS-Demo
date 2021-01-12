@@ -200,10 +200,17 @@ public class EmployeeEnrollmentServiceImpl extends ServiceImpl<EmployeeEnrollmen
         EmployeeEnrollment employeeEnrollment = this.getByCompanyIdAndEmployeeId(companyId, ext.getId());
         employeeEnrollment.setCardNo(dto.getCardNo());
         if (employeeEnrollment.getDevicePassword() != dto.getDevicePassword()) {
-            String devicePasswordSalt = UUID.randomUUID().toString(true);
-            employeeEnrollment.setDevicePasswordSalt(devicePasswordSalt);
-            employeeEnrollment.setDevicePasswordEncryption(PBKDF2Utils.getEncryptedPassword(dto.getDevicePassword(), devicePasswordSalt));
-            employeeEnrollment.setDevicePassword(dto.getDevicePassword());
+            if (StringUtils.isBlank(dto.getDevicePassword())) {
+                employeeEnrollment.setDevicePassword("");
+                employeeEnrollment.setDevicePasswordSalt("");
+                employeeEnrollment.setDevicePasswordEncryption("");
+            } else {
+                String devicePasswordSalt = UUID.randomUUID().toString(true);
+                employeeEnrollment.setDevicePasswordSalt(devicePasswordSalt);
+                employeeEnrollment
+                        .setDevicePasswordEncryption(PBKDF2Utils.getEncryptedPassword(dto.getDevicePassword(), devicePasswordSalt));
+                employeeEnrollment.setDevicePassword(dto.getDevicePassword());
+            }
         }
         employeeEnrollment.setDevicePermission(dto.getDevicePermission());
         this.updateById(employeeEnrollment);
@@ -276,7 +283,6 @@ public class EmployeeEnrollmentServiceImpl extends ServiceImpl<EmployeeEnrollmen
         employeeUpdateRequest.setLastName(employee.getLastName());
         employeeUpdateRequest.setFormattedName(employee.getFirstName() + "." + employee.getLastName());
         employeeUpdateRequest.setActive(Short.valueOf("1"));
-        employeeUpdateRequest.setPhoto(employee.getAvatar());
         employeeUpdateRequest.setCardNo(employeeEnrollment.getCardNo());
         employeeUpdateRequest.setLastUpdateTimeStamp(System.currentTimeMillis() / 1000);
         employeeUpdateRequest.setDevicePermission(employeeEnrollment.getDevicePermission().toString());

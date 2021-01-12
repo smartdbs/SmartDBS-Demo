@@ -185,13 +185,16 @@
           :label-col="{ span: 8 }"
           :wrapper-col="{ span: 14 }"
           labelAlign="left"
+          :model="editRow"
+          :rules="rules"
         >
-          <a-form-model-item :label="$t('device.deviceName')">
+          <a-form-model-item :label="$t('device.deviceName')" prop="alias">
             <a-input
               v-model="editRow.alias"
               :placeholder="$t('device.inputAlias')"
             />
           </a-form-model-item>
+
           <a-form-model-item :label="$t('device.deviceSn')">
             {{ editRow.sn }}
           </a-form-model-item>
@@ -199,7 +202,17 @@
             {{ editRow.model }}
           </a-form-model-item>
           <a-form-model-item :label="$t('device.fwVersion')">
-            {{ editRow.fwVersion }}
+            <span style="position: relative;"
+              ><span class="circle-cla" v-if="isUpdateFwversion"></span
+              >{{ editRow.fwVersion }}</span
+            >
+            <a-button
+              style="border:none"
+              icon="cloud-download"
+              v-if="isUpdateFwversion"
+              @click.stop="isUpgradeFirmware"
+              >有新版本</a-button
+            >
           </a-form-model-item>
         </a-form-model>
         <div class="network-info-cla">{{ $t('device.networkInfo') }}</div>
@@ -224,6 +237,115 @@
           </a-button>
         </div>
       </a-drawer>
+      <a-drawer
+        placement="right"
+        :closable="false"
+        :visible="upgradeVisible"
+        :width="500"
+        @close="closeUpgradeDrawer"
+        class="edit-drawer-cla"
+      >
+        <div>
+          <i class="iconfont zk-icon-fanhui enable-cla" @click="goBack"></i
+          ><span style="margin-left:10px;color:black">新版功能：</span>
+        </div>
+        <template v-if="!showUpgradeRes">
+          <div>{{ firmwareInfo.version }}</div>
+          <div>
+            <ul>
+              <li v-for="item in 3" :key="item">{{ item }}</li>
+            </ul>
+          </div>
+          <div style="text-align:center">
+            <a-popconfirm
+              title="此操作将升级固件，是否继续？"
+              ok-text="是"
+              cancel-text="否"
+              @confirm="upgrade"
+              @cancel="cancel"
+            >
+              <a-button type="primary" style="width:140px">升级</a-button>
+            </a-popconfirm>
+          </div>
+        </template>
+        <template v-else>
+          <a-steps
+            labelPlacement="vertical"
+            v-model="currentStep"
+            disabled
+            style="margin-top:100px"
+          >
+            <a-step title="开始升级" disabled v-if="!isOffline">
+              <a-icon
+                slot="icon"
+                type="sync"
+                :spin="active === 0"
+                v-if="!overFirst"
+              />
+              <a-icon slot="icon" type="check-circle" v-else />
+            </a-step>
+            <a-step v-else title="升级失败">
+              <a-icon type="close-circle" slot="icon" class="disable-cla" />
+            </a-step>
+
+            <a-step :title="secondTitle" v-if="!isShowError" disabled>
+              <a-icon
+                slot="icon"
+                type="sync"
+                :spin="currentStep === 1"
+                v-if="!overSecond"
+              />
+              <a-icon slot="icon" type="check-circle" v-else></a-icon>
+            </a-step>
+
+            <a-step title="下载失败" v-else disabled>
+              <!-- <a-icon slot="icon" type="sync" :spin="active === 2" /> -->
+              <a-icon type="close-circle" slot="icon" class="disable-cla" />
+            </a-step>
+
+            <a-step
+              title="安装中"
+              v-if="!isShowSuccess && !isInstallError"
+              disabled
+            >
+              <a-icon
+                slot="icon"
+                type="sync"
+                :spin="currentStep === 2 || currentStep === 3"
+              />
+            </a-step>
+            <a-step
+              title="安装失败"
+              v-else-if="!isShowSuccess && isInstallError"
+              disabled
+            >
+              <a-icon type="close-circle" slot="icon" class="disable-cla" />
+            </a-step>
+            <a-step
+              title="升级完成"
+              v-else-if="!isInstallError && isShowSuccess"
+              disabled
+            >
+              <a-icon type="sync" slot="icon" v-if="!overThird" />
+              <a-icon type="check-circle" slot="icon" v-else></a-icon>
+            </a-step>
+          </a-steps>
+          <div style="text-align:center;margin-top:15px">
+            <a-button
+              @click.stop="finishUpgrade"
+              type="primary"
+              v-if="isShowSuccess"
+              >升级完成</a-button
+            >
+            <a-button
+              @click.stop="upgradeAagin"
+              v-if="isShowError || isInstallError"
+              type="danger"
+              >重试</a-button
+            >
+          </div>
+        </template>
+      </a-drawer>
     </div>
   </topDownLayout>
 </template>
@@ -233,6 +355,7 @@ export default {
   data() {
     return {
       tableData: [],
+
       deviceProtocol: {
         0: 'pull',
         1: 'push',
@@ -278,6 +401,9 @@ export default {
       },
       addVisible: false,
       editVisible: false,
+      upgradeVisible: false,
+      showUpgradeRes: false,
+      isUpdateFwversion: false,
       addFrom: {
         sn: '',
         alias: '',
@@ -300,13 +426,284 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      firmwareInfo: [],
+      active: 0, // 初始状态  0 升级中 1-升级成功；2-升级失败；3-下载中 4-烧制中  5-升级超时
+      isShowError: false, // 是否展示错误
+      isShowSuccess: false,
+      isInstallError: false,
+      secondTitle: '下载中',
+      overFirst: false, //是否完成第一步
+      overSecond: false,
+      overThird: false,
+      currentStep: 0, // 当前第几步
+      timer: null,
+      isOffline: false
     }
   },
   mounted() {
     this.getDeviceList()
   },
   methods: {
+    upgradeAagin() {
+      // 升级失败 再次升级
+      this.active = 0
+      this.currentStep = 0
+
+      this.overFirst = false
+      this.overSecond = false
+      this.overThird = false
+
+      this.isShowError = false
+      this.isInstallError = false
+      this.secondTitle = '下载中'
+      this.upgrade()
+    },
+    finishUpgrade() {
+      // 完成升级-展示detail
+      this.upgradeVisible = false
+      this.editVisible = true
+      this.isUpdateFwversion = false
+    },
+    init() {
+      if (this.active === 0) {
+        // 初始状态
+        // this.active = 5 //模拟  3 进下载中  5 2 失败
+        // this.active = 1
+        this.currentStep = 1
+        this.overFirst = true
+        return
+      }
+      //  直接成功
+      if (this.active === 1) {
+        this.currentStep = 3
+        this.overFirst = true
+        this.overSecond = true
+        this.overThird = true
+        this.secondTitle = '下载完成'
+        this.isShowSuccess = true
+        clearInterval(this.timer)
+        this.timer = null
+        return
+      }
+      if (this.currentStep === 1) {
+        // 下载状态
+        if (this.active === 5 || this.active === 2) {
+          // 下载失败
+          this.isShowError = true
+          this.currentStep = 1
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+        if (this.active === 3 || this.active === 4) {
+          // 下载完成
+          // this.active = 4 // 模拟 4 安装中  2 5  安装失败   1 完成
+          this.currentStep = 2
+          this.overSecond = true
+          this.secondTitle = '下载完成'
+          return
+        }
+        if (this.active === 1) {
+          // 直接跳过下载、安装中
+          this.currentStep = 3
+          this.overFirst = true
+          this.overSecond = true
+          this.overThird = true
+          this.secondTitle = '下载完成'
+          this.isShowSuccess = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+      }
+
+      if (this.currentStep === 2) {
+        // 安装状态
+        if (this.active === 2 || this.active === 5) {
+          // 安装失败
+          this.isInstallError = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+
+        if (this.active === 4) {
+          // 安装中
+          this.active = 1
+          this.currentStep = 3
+          this.isUploadSuccess = true
+          return
+        }
+        if (this.active === 1) {
+          // 直接跳过下载、安装中
+          this.currentStep = 3
+          this.overFirst = true
+          this.overSecond = true
+          this.overThird = true
+          this.secondTitle = '下载完成'
+          this.isShowSuccess = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+      }
+      if (this.currentStep === 3) {
+        // 升级完成
+        if (this.active === 1) {
+          this.currentStep = 3
+          this.overThird = true
+          this.isShowSuccess = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+      }
+      // //下载中
+      // if (this.active === 3) {
+      //   this.active = 4
+      //   this.currentStep = 2
+      //   this.overSecond = true
+      //   this.secondTitle = '下载完成'
+      //   return
+      // }
+      // // 下载失败
+      // if (this.active === 3) {
+      //   this.active = 5
+      //   this.isShowError = true
+      //   this.currentStep = 1
+      //   clearInterval(this.timer)
+      //   this.timer = null
+      //   return
+      // }
+      // // 安装中
+      // if (this.active === 4) {
+      //   this.active = 1
+      //   this.currentStep = 3
+      //   this.isUploadSuccess = true
+      //   return
+      // }
+      // // 安装失败
+      // if (this.active === 4) {
+      //   this.active = 2
+      //   this.currentStep = 3
+      //   this.isInstallError = true
+      //   clearInterval(this.timer)
+      //   this.timer = null
+      //   return
+      // }
+      // // 升级完成
+      // if (this.active === 1) {
+      //   this.currentStep = 3
+      //   this.overThird = true
+      //   this.isShowSuccess = true
+      //   clearInterval(this.timer)
+      //   this.timer = null
+      //   return
+      // }
+    },
+    closeUpgradeDrawer() {
+      if (this.showUpgradeRes) {
+        // 获取历史结果 是否在升级中界面
+        if (this.isShowError || this.isInstallError || this.isShowSuccess) {
+          // 升级过程 不可关闭
+          this.upgradeVisible = false
+        } else {
+          // 升级完成后 可关闭
+          this.upgradeVisible = true
+          this.isUpdateFwversion = false
+        }
+      } else {
+        this.upgradeVisible = false
+        this.isUpdateFwversion = false
+      }
+    },
+    goBack() {
+      if (this.showUpgradeRes) {
+        this.showUpgradeRes = false
+      } else if (!this.showUpgradeRes) {
+        this.upgradeVisible = false
+        this.editVisible = true
+      }
+    },
+    upgrade() {
+      this.showUpgradeRes = true
+      let params = {
+        sn: this.editRow.sn,
+        version: this.firmwareInfo.version
+      }
+      this.request('upgradeFwVersion', params)
+        .then(data => {
+          if (data.code === '00') {
+            if (data.data.taskId) {
+              this.timer = setInterval(() => {
+                // 定时获取升级状态
+                this.getUpgrageHistory(data.data.taskId).then(res => {
+                  this.active = res
+                  this.init()
+                })
+              }, 2000)
+            } else {
+              this.errorMessage('缺少taskId')
+            }
+          } else {
+            this.errorMessage(data.message)
+            this.isOffline = true
+          }
+        })
+        .catch(e => this.errorMessage(e))
+    },
+    // 升级进度
+    getUpgrageHistory(taskId) {
+      return new Promise((resolve, reject) => {
+        let params = {
+          sn: this.editRow.sn,
+          taskId
+          // state: this.active //模拟
+        }
+        this.request('upgradeFwVersionHistory', params, this.pager)
+          .then(data => {
+            if (data.code === '00') {
+              resolve(data.data[0].status)
+            } else {
+              reject(data.message)
+              this.errorMessage(data.message)
+              clearInterval(this.timer)
+              this.timer = null
+            }
+          })
+          .catch(e => {
+            this.errorMessage(e)
+            clearInterval(this.timer)
+            this.timer = null
+          })
+      })
+    },
+    isUpgradeFirmware() {
+      if (this.isUpdateFwversion) {
+        this.upgradeVisible = true
+        this.editVisible = false
+      }
+    },
+    loadTimeZoneList() {
+      this.request('loadTimezoneList')
+        .then(data => {
+          if (data.code === '00') {
+            this.timeZoneListOptions = data.data
+          } else {
+            this.errorMessage(data.message)
+          }
+        })
+        .catch(e => this.errorMessage(e))
+    },
+    onTimeZoneChange(value) {
+      if (value.length === 1) {
+        this.addFrom.timeZone = value[0]
+      } else {
+        this.addFrom.timeZone = value[0]
+        this.addFrom.timezoneId = value[1]
+      }
+    },
     showAdd() {
       this.addFrom = {
         sn: '',
@@ -330,16 +727,63 @@ export default {
     },
 
     details(record) {
+      this.isShowError = false
+      this.isShowSuccess = false
+      this.isInstallError = false
+      this.isOffline = false
+
+      this.overFirst = false
+      this.overSecond = false
+      this.overThird = false
+
+      this.currentStep = 0
+      this.active = 0
+      this.showUpgradeRes = false
+      this.title = '下载中'
+
+      this.getUpgrageList(record.sn)
       this.originRow = record
       this.editRow = Object.assign({}, record)
       // this.editRow.protocol = this.deviceProtocol[this.editRow.protocol]
       // this.editRow.model
+      // this.editRow.timeZone = [this.editRow.timeZone, this.editRow.timezoneId]
       this.editVisible = true
     },
+
+    getUpgrageList(sn) {
+      this.request('getUpgradeFwVersionListBySn', {
+        sn
+      })
+        .then(data => {
+          if (data.code === '00') {
+            if (data.data.length !== 0) {
+              this.isUpdateFwversion = true
+              this.firmwareInfo = data.data[0] // 取升级列表第一项
+            } else {
+              this.isUpdateFwversion = false
+            }
+          } else {
+            this.errorMessage(data.message)
+          }
+        })
+        .catch(e => this.errorMessage(e))
+    },
     submitEdit() {
+      // let timezone = this.editRow.timeZone
+      // let timeZone, timezoneId
+      // if (timezone) {
+      //   if (timezone.length === 1) {
+      //     timeZone = timezone[0]
+      //   } else {
+      //     timeZone = timezone[0]
+      //     timezoneId = timezone[1]
+      //   }
+      // }
       this.request('updateDevice', {
         sn: this.editRow.sn,
         alias: this.editRow.alias
+        // timeZone,
+        // timezoneId
       })
         .then(data => {
           if (data.code === '00') {
@@ -527,5 +971,21 @@ export default {
   .enable-cla {
     color: @primary-color;
   }
+}
+.enable-cla {
+  color: @primary-color;
+}
+.disable-cla {
+  color: @error-color;
+}
+.circle-cla {
+  position: absolute;
+  top: 0px;
+  left: -10px;
+  width: 6px;
+  height: 6px;
+  background: red;
+  display: inline-block;
+  border-radius: 50%;
 }
 </style>

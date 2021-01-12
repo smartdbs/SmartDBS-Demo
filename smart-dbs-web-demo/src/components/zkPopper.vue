@@ -57,6 +57,7 @@ export default {
         let bottom = _h - rect.bottom
         let left = rect.left
         // let width = rect.width
+
         if (bottom > top) {
           let maxht = bottom < this.maxHt ? bottom : this.maxHt
           this.$el.style.cssText =

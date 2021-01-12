@@ -16,11 +16,13 @@ export default {
     to: '至',
     name: '名称',
     date: '日期',
+    validDate: '有效期',
     noData: '暂无数据',
     tips: '提示',
     welcome: '您好，欢迎使用DBS Demo！'
   },
   door: {
+    operator: '操作者',
     status: '状态',
     online: '在线',
     offline: '离线',
@@ -67,6 +69,8 @@ export default {
     remoteOpenDoorTips: '此操作将进行远程开门，是否继续？'
   },
   employee: {
+    isJpgOrPng: '上传图片仅支持png、jpg格式',
+    isLt2M: '上传图片大小不能超过2M',
     registerType: '①登记类型',
     selectDevice: '②选择设备',
     entryInfo: '③录入信息',
@@ -184,7 +188,7 @@ export default {
     timezone: '时间段',
     timezoneName: '时间段名称',
     baseInfo: '基础信息',
-    timezoneSeeting: '时间段设置',
+    timezoneSeeting: '更新时间段设置',
     copyTip: '复制星期一到其他工作日',
     portionGate: '分配门',
     employeeAuth: '人员授权',
@@ -219,7 +223,7 @@ export default {
     doorSetting: '门禁设置',
     accData: '门禁数据',
     attManager: '考勤管理',
-    attDevice: '考勤设备',
+    attDevice: '考勤设置',
     attData: '考勤数据',
     deviceManager: '设备管理',
     deviceList: '设备管理',

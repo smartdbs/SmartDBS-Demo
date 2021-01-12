@@ -59,6 +59,9 @@
         rowKey="id"
         tableLayout="fixed"
       >
+        <div slot="operator" slot-scope="record">
+          {{ isEmpty(record.operator) }}
+        </div>
         <div slot="inOutState" slot-scope="record">
           <span v-if="record.inOutType === 0">{{ $t('door.in') }}</span>
           <span v-if="record.inOutType === 1">{{ $t('door.out') }}</span>
@@ -107,6 +110,10 @@ export default {
         {
           title: this.$t('door.deviceSn'),
           dataIndex: 'sn'
+        },
+        {
+          title: this.$t('door.operator'),
+          scopedSlots: { customRender: 'operator' }
         },
         {
           title: this.$t('door.openWay'),

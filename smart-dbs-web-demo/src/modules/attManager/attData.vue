@@ -52,6 +52,9 @@
         :data-source="tableData"
         tableLayout="fixed"
       >
+        <div slot="alias" slot-scope="record">
+          {{ isEmpty(record.alias) }}
+        </div>
       </a-table>
       <div class="pagination-box-cla">
         <a-pagination
@@ -91,7 +94,8 @@ export default {
         },
         {
           title: this.$t('device.deviceName'),
-          dataIndex: 'alias'
+          key: 'alias',
+          scopedSlots: { customRender: 'alias' }
         },
         {
           title: this.$t('att.checkInTime'),

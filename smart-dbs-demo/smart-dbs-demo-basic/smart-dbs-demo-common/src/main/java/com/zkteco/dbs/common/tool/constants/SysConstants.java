@@ -40,6 +40,7 @@ public class SysConstants {
      */
     public static final Integer ENABLE = 1;
     public static final Integer DISABLE = 0;
+    public static final Integer RESET = 2;
     public static final Integer ONLINE = 1;
     public static final Integer OFFLINE = 0;
     public static final Integer ACTIVATED = 1;
@@ -96,6 +97,11 @@ public class SysConstants {
      * 会话Id
      */
     public static final String SID = "sid";
+
+    /**
+     * taskId
+     */
+    public static final String TASK_ID = "taskId";
 
     /**
      * 未知

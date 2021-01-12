@@ -16,9 +16,7 @@
       </div>
       <zk-breadcrumb></zk-breadcrumb>
       <div class="content-cla">
-        <transition name="fade">
-          <router-view />
-        </transition>
+        <router-view />
       </div>
     </a-layout>
   </a-layout>
@@ -47,7 +45,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style scoped lang="less">
 .components-layout-custom-trigger {
   .trigger {
     font-size: 18px;
@@ -90,24 +88,7 @@ export default {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.25);
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
 
-.fade-enter.fade-enter-active,
-.fade-appear.fade-appear-active {
-  -webkit-animation-name: none;
-  animation-name: none;
-}
-
-.fade-leave.fade-leave-active {
-  -webkit-animation-name: none;
-  animation-name: none;
-}
 .ant-breadcrumb {
   position: absolute;
   top: 60px;

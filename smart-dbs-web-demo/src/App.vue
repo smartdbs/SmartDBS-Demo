@@ -72,4 +72,8 @@ body {
     }
   }
 }
+.ant-select-dropdown-menu-item-selected,
+.ant-cascader-menu-item-active {
+  color: @primary-color !important;
+}
 </style>

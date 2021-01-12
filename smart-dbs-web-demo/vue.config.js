@@ -1,4 +1,5 @@
 let path = require('path')
+const webpack = require('webpack')
 const Happypack = require('happypack')
 const { IgnorePlugin } = require('webpack')
 const packageConfig = require('./package.json')
@@ -7,20 +8,73 @@ function resolve(dir) {
   // path.join()方法用于连接路径
   return path.join(__dirname, dir)
 }
+
+const getCurrentTime = () => {
+  let date = new Date()
+  let hours = date.getHours() < 10 ? +'0' + date.getHours() : date.getHours()
+  let minutes =
+    date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+  return (
+    date.getFullYear() +
+    '-' +
+    (date.getMonth() + 1) +
+    '-' +
+    date.getDate() +
+    ' ' +
+    hours +
+    ':' +
+    minutes +
+    ':' +
+    date.getSeconds()
+  )
+}
+
+const cdn = {
+  // css: ['/lib/antd.min.css'],
+  js: [
+    '/lib/vue.runtime.min.js',
+    '/lib/vue.min.js',
+    '/lib/vue-router.min.js',
+    '/lib/axios.min.js',
+    '/lib/vuex.min.js',
+    // '/lib/antd.min.js',
+    '/lib/vue-i18n.min.js'
+  ]
+}
+
 module.exports = {
-  productionSourceMap: true,
+  productionSourceMap: false,
   chainWebpack: config => {
     config.plugin('html').tap(args => {
+      args[0].cdn = cdn
       args[0].title = 'dbs-demo'
       return args
     })
+    // 移除 prefetch 插件
+    config.plugins.delete('prefetch')
+    // 移除 preload 插件
+    config.plugins.delete('preload')
+    // 压缩代码
+    // config.optimization.minimize(true)
+    // 分割代码
+    // config.optimization.splitChunks({
+    //   chunks: 'all'
+    // })
   },
   configureWebpack: {
     devtool: 'source-map',
     output: {
       // 输出重构  打包编译后的 文件名称  【模块名称.版本号.js】
-      filename: `js/[name].js`,
-      chunkFilename: `js/[name].js`
+      filename: `js/[name]-[hash].js`,
+      chunkFilename: `js/[name]-[hash].js`
+    },
+    externals: {
+      vue: 'Vue',
+      // 'vue-antd-ui': 'antd',
+      'vue-router': 'VueRouter',
+      vuex: 'Vuex',
+      axios: 'axios',
+      'vue-i18n': 'VueI18n'
     },
     plugins: [
       new IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -28,7 +82,15 @@ module.exports = {
         loaders: ['babel-loader', 'vue-loader', 'url-loader'],
         cache: true,
         threads: 6
-      })
+      }),
+      new webpack.BannerPlugin(
+        'project name: ' +
+          packageConfig.name +
+          ' \ncreateTime ' +
+          getCurrentTime() +
+          '\nversion: ' +
+          packageConfig.version
+      )
     ],
     resolve: {
       alias: {

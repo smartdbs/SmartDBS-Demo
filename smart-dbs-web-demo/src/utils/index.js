@@ -20,3 +20,27 @@ export const filterMenuDate = menu => {
   })
   return menus
 }
+
+/**
+ * 获取当前时间
+ * return  createTime yyyy-mm-dd hh:mm:ss
+ */
+export const getCurrentTime = () => {
+  let date = new Date()
+  let hours = date.getHours() < 10 ? +'0' + date.getHours() : date.getHours()
+  let minutes =
+    date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+  return (
+    date.getFullYear() +
+    '-' +
+    (date.getMonth() + 1) +
+    '-' +
+    date.getDate() +
+    ' ' +
+    hours +
+    ':' +
+    minutes +
+    ':' +
+    date.getSeconds()
+  )
+}

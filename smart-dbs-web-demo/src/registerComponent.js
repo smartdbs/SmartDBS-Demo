@@ -36,7 +36,10 @@ import {
   Col,
   Checkbox,
   Switch,
-  Tooltip
+  Tooltip,
+  Cascader,
+  steps,
+  Popconfirm
 } from 'ant-design-vue'
 
 //自定义字体图标库
@@ -73,7 +76,10 @@ let components = [
   Col,
   Checkbox,
   Switch,
-  Tooltip
+  Tooltip,
+  Cascader,
+  steps,
+  Popconfirm
 ]
 /**
  * 注册ant 组件

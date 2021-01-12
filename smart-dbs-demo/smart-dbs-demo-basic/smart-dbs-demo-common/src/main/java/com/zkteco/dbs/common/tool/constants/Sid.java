@@ -58,7 +58,11 @@ public enum Sid {
      * 门实时状态
      */
     DOOR_REAL_STATUS("dse.push.acc.realDoorStatus"),
-    ;
+
+    /**
+     * 卡信息
+     */
+    PUNCH_CARD("dse.push.employee.card");
 
     /**
      * 服务id

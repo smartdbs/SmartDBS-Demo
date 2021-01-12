@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * DoorTransactionRecordProcessor
@@ -52,6 +53,7 @@ public class DoorTransactionRecordProcessor implements DataProcessor {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Message handle(Message request) {
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         String companyId = company.getId();

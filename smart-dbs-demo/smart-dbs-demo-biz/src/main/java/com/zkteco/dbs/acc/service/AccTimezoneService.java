@@ -53,6 +53,7 @@ public interface AccTimezoneService extends IService<AccTimezone> {
      * @date 2020/11/30 14:47
      * @since v1.0.0
      */
+    @Deprecated
     void update(BaseDTO<AccTimezone> dto);
 
     /**

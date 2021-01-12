@@ -6,7 +6,6 @@
         :columns="columns"
         :data-source="tableData"
         rowKey="timezoneNum"
-        tableLayout="fixed"
       >
         <div slot="action" slot-scope="record">
           <i
@@ -14,11 +13,11 @@
             @click="setAccTimezone(record)"
             class="shijian-icon-cla icon iconfont zk-icon-shijian"
           ></i>
-          <i
+          <!-- <i
             :title="$t('common.details')"
             @click="details(record)"
             class="details-cla icon iconfont zk-icon-ziyuan"
-          ></i>
+          ></i> -->
 
           <i
             :title="$t('common.delete')"
@@ -42,10 +41,10 @@
 
     <a-drawer
       placement="right"
-      :title="isEdit ? $t('acc.timezoneSeeting') : $t('acc.createTimeSlot')"
+      :title="isUpdate ? $t('acc.timezoneSeeting') : $t('acc.createTimeSlot')"
       :closable="false"
       :visible="addVisible"
-      :width="500"
+      :width="600"
       @close="onCloseAdd()"
       class="add-drawer-cla"
     >
@@ -57,11 +56,7 @@
         ref="editForm"
         :rules="rules"
       >
-        <a-form-model-item
-          v-if="!isEdit"
-          :label="$t('acc.timezoneName')"
-          prop="timezoneName"
-        >
+        <a-form-model-item :label="$t('acc.timezoneName')" prop="timezoneName">
           <a-input v-model="editFrom.timezoneName" />
         </a-form-model-item>
         <a-form-model-item :label="$t('acc.week1')">
@@ -94,7 +89,7 @@
       </a-button>
     </a-drawer>
 
-    <a-drawer
+    <!-- <a-drawer
       placement="right"
       :title="$t('acc.baseInfo')"
       :closable="false"
@@ -110,9 +105,6 @@
         :rules="rules"
         ref="currentRow"
       >
-        <!-- <a-form-model-item :label="$t('acc.timezoneNum')">
-          <a-input disabled v-model="currentRow.timezoneNum" />
-        </a-form-model-item> -->
         <a-form-model-item :label="$t('acc.timezoneName')" prop="timezoneName">
           <a-input v-model="currentRow.timezoneName" />
         </a-form-model-item>
@@ -120,7 +112,7 @@
       <a-button @click="saveEdit" class="save-btn" type="primary">
         {{ $t('common.save') }}
       </a-button>
-    </a-drawer>
+    </a-drawer> -->
   </div>
 </template>
 <script>
@@ -150,6 +142,7 @@ export default {
         }
       ],
       isEdit: false,
+      isUpdate: false,
       editFrom: {
         timezoneNum: '',
         timezoneName: '',
@@ -208,6 +201,7 @@ export default {
     },
     setAccTimezone(row) {
       this.isEdit = true
+      this.isUpdate = true
       this.editFrom.timezoneNum = row.timezoneNum
       this.editFrom.timezoneName = row.timezoneName
       // this.isCheckAll(row.detail[0], row.detail)
@@ -291,55 +285,95 @@ export default {
     saveAccTimezone() {
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          let params = {
-            detail: []
-          }
-          if (this.isEdit) {
-            params.timezoneNum = this.editFrom.timezoneNum
-          }
-          params.timezoneName = this.editFrom.timezoneName
-          Object.keys(this.editFrom).forEach(item => {
-            if (item.startsWith('week')) {
-              let week = item.substr(4)
-              let info = this.editFrom[item]
-              if (info instanceof Array && info.length === 2) {
-                params.detail.push({
-                  week: week,
-                  startTime: info[0],
-                  endTime: info[1]
-                })
-              } else {
-                params.detail.push({
-                  week: week,
-                  startTime: '',
-                  endTime: ''
-                })
-              }
+          if (this.isUpdate) {
+            console.log('ssss')
+            let params = {
+              timezoneNum: this.editFrom.timezoneNum,
+              timezoneName: this.editFrom.timezoneName,
+              detail: []
             }
-          })
-
-          this.request(
-            this.isEdit ? 'accTimezoneSetUp' : 'accTimezoneAdd',
-            params
-          )
-            .then(data => {
-              if (data.code === '00') {
-                this.successMessage()
-                this.addVisible = false
-                this.getPageList()
-              } else {
-                this.errorMessage(data.message)
+            Object.keys(this.editFrom).forEach(item => {
+              if (item.startsWith('week')) {
+                let week = item.substr(4)
+                let info = this.editFrom[item]
+                if (info instanceof Array && info.length === 2) {
+                  params.detail.push({
+                    week: week,
+                    startTime: info[0],
+                    endTime: info[1]
+                  })
+                } else {
+                  params.detail.push({
+                    week: week,
+                    startTime: '',
+                    endTime: ''
+                  })
+                }
               }
             })
-            .catch(e => {
-              this.errorMessage(e)
-              console.log(e)
+            this.request('updateAccTimezone', params)
+              .then(data => {
+                if (data.code === '00') {
+                  this.successMessage()
+                  this.addVisible = false
+                  this.getPageList()
+                } else {
+                  this.errorMessage(data.message)
+                }
+              })
+              .catch(e => this.errorMessage(e))
+          } else {
+            let params = {
+              detail: []
+            }
+            if (this.isEdit) {
+              params.timezoneNum = this.editFrom.timezoneNum
+            }
+            params.timezoneName = this.editFrom.timezoneName
+            Object.keys(this.editFrom).forEach(item => {
+              if (item.startsWith('week')) {
+                let week = item.substr(4)
+                let info = this.editFrom[item]
+                if (info instanceof Array && info.length === 2) {
+                  params.detail.push({
+                    week: week,
+                    startTime: info[0],
+                    endTime: info[1]
+                  })
+                } else {
+                  params.detail.push({
+                    week: week,
+                    startTime: '',
+                    endTime: ''
+                  })
+                }
+              }
             })
+
+            this.request(
+              this.isEdit ? 'accTimezoneSetUp' : 'accTimezoneAdd',
+              params
+            )
+              .then(data => {
+                if (data.code === '00') {
+                  this.successMessage()
+                  this.addVisible = false
+                  this.getPageList()
+                } else {
+                  this.errorMessage(data.message)
+                }
+              })
+              .catch(e => {
+                this.errorMessage(e)
+                console.log(e)
+              })
+          }
         }
       })
     },
     showCreate() {
       this.isEdit = false
+      this.isUpdate = false
       this.editFrom.timezoneNum = ''
       this.editFrom.timezoneName = ''
       this.weeks.forEach(item => {
@@ -376,7 +410,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-.add-drawer-cla {
+.acc-bottom-cla {
+  /deep/ .ant-table-thead > tr > th {
+    width: 50%;
+  }
 }
 .save-btn {
   position: fixed;

@@ -131,6 +131,20 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void removeOnDemo(DeviceDTO dto) {
+        //删除demo端设备信息
+        this.remove(new LambdaQueryWrapper<Device>()
+                .eq(Device::getCompanyId, dto.getCompanyId())
+                .eq(Device::getSn, dto.getSn()));
+        //删除demo端设备员工关系信息
+        deviceEmployeeService.removeBySn(dto.getCompanyId(), dto.getSn());
+        //删除门信息和门权限关系
+        accDoorService.removeBySn(dto.getCompanyId(), dto.getSn());
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(BaseDTO<DeviceDTO> dto) {
         DeviceDTO deviceDTO = dto.getPayload();
         //检查参数是否合法

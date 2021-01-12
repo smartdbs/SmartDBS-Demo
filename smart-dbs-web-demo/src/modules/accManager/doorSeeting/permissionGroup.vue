@@ -77,7 +77,7 @@
             >
           </a-select>
         </a-form-model-item>
-        <a-form-model-item :label="$t('common.date')">
+        <a-form-model-item :label="$t('common.validDate')">
           <a-range-picker
             @change="dateChange"
             :placeholder="[$t('common.startTime'), $t('common.endTime')]"
@@ -245,10 +245,10 @@
             >
           </a-select>
         </a-form-model-item>
-        <a-form-model-item :label="$t('common.date')">
+        <a-form-model-item :label="$t('common.validDate')">
           <a-range-picker
             @change="editDateChange"
-            :placeholder="[$t('startTime.date'), $t('common.endTime')]"
+            :placeholder="[$t('common.startTime'), $t('common.endTime')]"
             :allowClear="true"
             v-model="editDate"
             dropdownClassName="owner-dropdown-cla"
@@ -373,9 +373,9 @@ export default {
       this.$confirm({
         title: this.$t('acc.deletePermissionCroup'),
         content: '',
-        okText: 'Yes',
+        okText: this.$t('common.okText'),
         okType: 'danger',
-        cancelText: 'No',
+        cancelText: this.$t('common.cancelText'),
         onOk() {
           let params = {
             groupNum: record.groupNum

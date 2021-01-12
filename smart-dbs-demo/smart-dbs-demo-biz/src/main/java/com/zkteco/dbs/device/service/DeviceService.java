@@ -43,7 +43,7 @@ public interface DeviceService extends IService<Device> {
     void save(BaseDTO<DeviceDTO> dto);
 
     /**
-     * delete
+     * remove
      * 设备管理-删除设备
      * @param dto
      * @return void
@@ -53,6 +53,18 @@ public interface DeviceService extends IService<Device> {
      * @since 1.0.0
      */
     void remove(BaseDTO<DeviceDTO> dto);
+
+    /**
+     * removeOnDemo
+     * 设备管理-删除Demo端设备相关信息
+     * @param dto
+     * @return void
+     * @throws
+     * @author sheldon.wu
+     * @date 2020/11/20 14:24
+     * @since 1.0.0
+     */
+    void removeOnDemo(DeviceDTO dto);
 
     /**
      * update

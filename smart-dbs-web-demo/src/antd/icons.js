@@ -16,5 +16,7 @@ export {
   MenuUnfoldOutline,
   CloseCircleOutline,
   QuestionCircleOutline,
-  CheckCircleOutline
+  CheckCircleOutline,
+  CloudDownloadOutline,
+  SyncOutline
 } from '@ant-design/icons'

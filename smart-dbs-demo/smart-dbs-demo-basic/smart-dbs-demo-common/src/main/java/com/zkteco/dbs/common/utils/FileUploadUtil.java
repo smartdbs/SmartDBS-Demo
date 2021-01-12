@@ -29,7 +29,7 @@ public class FileUploadUtil {
 
     private static final String FILE_FORMAT = "jpg,jpeg,gif,png";
 
-    private static final long FILE_SIZE = 1024 * 1024 * 10;
+    private static final long FILE_SIZE = 1024 * 1024 * 2;
 
     private static final String SECOND_PATH = "/temp";
 
@@ -38,12 +38,6 @@ public class FileUploadUtil {
 
     public String upload(MultipartFile file, String type, String lang) {
         ResultUtil.handldNullError(file, "E25", lang);
-
-        //校验文件大小
-        if (file.getSize() > FILE_SIZE) {
-            // 图片超过10M
-            ResultUtil.handldErrorInfo("E21", lang);
-        }
 
         //获取业务对应二级目录
         String path = SECOND_PATH + FileTypeEnum.getPathByType(type);

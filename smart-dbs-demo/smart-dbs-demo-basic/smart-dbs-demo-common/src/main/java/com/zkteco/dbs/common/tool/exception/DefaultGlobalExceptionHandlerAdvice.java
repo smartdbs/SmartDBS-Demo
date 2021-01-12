@@ -56,7 +56,7 @@ public class DefaultGlobalExceptionHandlerAdvice {
     public Result uploadFileLimitException(HttpServletRequest req, MultipartException ex) {
         String lang = getLangFromReqBody(req);
         log.error("upload file exception:{}"+ex.getMessage(),ex);
-        return Result.getFailure("E08",lang);
+        return Result.getFailure("E21",lang);
     }
 
     /**

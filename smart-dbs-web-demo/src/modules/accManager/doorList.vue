@@ -45,6 +45,7 @@
             :title="$t('door.open')"
             @click="remoteOpenDoor(record)"
           ></i>
+
           <i
             :title="$t('common.details')"
             @click="details(record)"
@@ -96,6 +97,7 @@
           <a-input
             :placeholder="$t('door.reqDoorPassword')"
             v-model="pwdForm.password"
+            type="password"
           />
         </a-form-model-item>
       </a-form-model>
@@ -168,7 +170,7 @@
           prop="password"
           v-if="settingForm.remoteType"
         >
-          <a-input v-model="settingForm.password" />
+          <a-input v-model="settingForm.password" type="password" />
         </a-form-model-item>
 
         <div>

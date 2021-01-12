@@ -36,6 +36,7 @@
       rowKey="id"
       tableLayout="fixed"
       style="height: 400px;overflow: auto;"
+      :loading="loading"
     >
       <div slot="status" slot-scope="record">
         <span
@@ -76,6 +77,7 @@ export default {
         type: 0,
         value: ''
       },
+      loading: false,
       tableData: [],
       columns: [
         {
@@ -107,10 +109,13 @@ export default {
         }
       })
       parmas.groupNum = this.groupNums
+      this.loading = true
       this.request('employeeUnassignList', parmas)
         .then(data => {
           if (data.code === '00') {
+            this.loading = false
             this.tableData = data.data
+            this.loading = false
           } else {
             this.errorMessage(data.message)
           }

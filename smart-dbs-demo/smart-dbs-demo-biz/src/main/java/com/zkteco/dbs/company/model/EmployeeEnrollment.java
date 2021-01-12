@@ -1,18 +1,14 @@
 package com.zkteco.dbs.company.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.gitee.sunchenbin.mybatis.actable.annotation.ColumnComment;
 import com.gitee.sunchenbin.mybatis.actable.annotation.ColumnType;
 import com.gitee.sunchenbin.mybatis.actable.annotation.DefaultValue;
-import java.io.Serializable;
-
 import com.zkteco.dbs.common.base.model.BaseModel;
+import java.io.Serializable;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * @ClassName EmployeeEnrollment
@@ -93,6 +89,13 @@ public class EmployeeEnrollment extends BaseModel<EmployeeEnrollment> {
     @TableField
     @ColumnComment("所属时间段编号")
     private String timezoneId;
+
+    /**
+     * 卡号信息推送时间
+     */
+    @TableField
+    @ColumnComment("DBS推送数据中卡号信息变更时间戳")
+    private Long pushTimeStamp;
 
     @Override
     protected Serializable pkVal() {

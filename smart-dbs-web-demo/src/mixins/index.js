@@ -47,7 +47,17 @@ let install = Vue => {
           this.pager.total = data.total
           this.pager.curPage = data.curPage
           this.pager.pageSize = data.pageSize
+        } else if (data.total === 0) {
+          this.pager.total = data.total
+          this.pager.curPage = data.curPage
+          this.pager.pageSize = data.pageSize
         }
+      },
+      isEmpty(val) {
+        if (val === null || val === undefined || val === '') {
+          return 'N/A'
+        }
+        return val
       }
     }
   })

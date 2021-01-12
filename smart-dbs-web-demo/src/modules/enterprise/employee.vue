@@ -14,6 +14,9 @@
         rowKey="id"
         tableLayout="fixed"
       >
+        <div slot="cardNo" slot-scope="record">
+          {{ isEmpty(record.cardNo) }}
+        </div>
         <div slot="devicePermission" slot-scope="record">
           <span v-if="record.devicePermission === 14">{{
             $t('employee.deviceAdmin')
@@ -175,7 +178,7 @@
                 :label="$t('employee.devicePassword')"
                 prop="devicePassword"
               >
-                <a-input v-model="editForm.devicePassword" />
+                <a-input v-model="editForm.devicePassword" type="password" />
               </a-form-model-item>
 
               <a-form-model-item :label="$t('employee.devicePermision')">
@@ -313,7 +316,7 @@
             :label="$t('employee.devicePassword')"
             prop="devicePassword"
           >
-            <a-input v-model="addFrom.devicePassword" />
+            <a-input v-model="addFrom.devicePassword" type="password" />
           </a-form-model-item>
           <a-form-model-item :label="$t('employee.devicePermision')">
             <a-select v-model="addFrom.devicePermission">
@@ -524,6 +527,7 @@
 </template>
 
 <script>
+import { wsUrl } from '../../../package.json'
 export default {
   data() {
     let handlePass = (rule, value, callback) => {
@@ -557,7 +561,8 @@ export default {
         },
         {
           title: this.$t('employee.cardNo'),
-          dataIndex: 'cardNo'
+          key: 'cardNo',
+          scopedSlots: { customRender: 'cardNo' }
         },
         {
           title: this.$t('employee.devicePermission'),
@@ -603,6 +608,11 @@ export default {
             required: true,
             message: this.$t('common.noEmpty'),
             trigger: 'blur'
+          },
+          {
+            max: 32,
+            message: '超过最大长度32位',
+            trigger: ['blur', 'change']
           }
         ],
         lastName: [
@@ -610,6 +620,11 @@ export default {
             required: true,
             message: this.$t('common.noEmpty'),
             trigger: 'blur'
+          },
+          {
+            max: 32,
+            message: '超过最大长度32位',
+            trigger: ['blur', 'change']
           }
         ]
       },
@@ -675,7 +690,7 @@ export default {
         })
     },
     initWebScoket(path) {
-      let url = `${process.env.VUE_APP_API_WS}/ws/${path}`
+      let url = `${wsUrl}/ws/${path}`
       if (typeof WebSocket === 'undefined') {
         // console.log('您的浏览器不支持socket')
       } else {
@@ -690,7 +705,7 @@ export default {
       }
     },
     open: function() {
-      // console.log('socket连接成功')
+      console.log('socket连接成功')
     },
     error: function() {
       console.log('连接错误')
@@ -833,6 +848,7 @@ export default {
     },
 
     getEmployeeList() {
+      this.$store.dispatch('showloadding', true)
       this.request(
         'getEmployeeList',
         {
@@ -844,10 +860,15 @@ export default {
           if (data.code === '00') {
             this.tableData = data.data
             this.setPager(data)
+          } else {
+            this.errorMessage(data.message)
           }
         })
         .catch(e => {
-          console.log(e)
+          this.errorMessage(e)
+        })
+        .finally(() => {
+          this.$store.dispatch('showloadding', false)
         })
     },
 
@@ -909,11 +930,11 @@ export default {
           : localStorage.getItem('locale')
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
       if (!isJpgOrPng) {
-        this.$message.error('You can only upload JPG file!')
+        this.$message.error(this.$t('employee.isJpgOrPng'))
       }
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
-        this.$message.error('Image must smaller than 2MB!')
+        this.$message.error(this.$t('employee.isLt2M'))
       }
       return isJpgOrPng && isLt2M
     }

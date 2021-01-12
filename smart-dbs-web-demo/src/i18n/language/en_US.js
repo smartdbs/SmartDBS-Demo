@@ -17,11 +17,13 @@ export default {
     to: 'To',
     name: 'Name',
     date: 'Date',
+    validDate: 'Validity date',
     noData: 'No Data',
     tips: 'Prompt',
     welcome: 'Hello, welcome to use DBS Demo!'
   },
   door: {
+    operator: 'Operator',
     status: 'State',
     online: 'Online',
     offline: 'Offline',
@@ -71,6 +73,8 @@ export default {
       'This operation will open the door remotely. Do you want to continue?'
   },
   employee: {
+    isJpgOrPng: 'Upload pictures only in PNG, JPG format',
+    isLt2M: 'Image must smaller than 2MB!',
     registerType: '①Registration type',
     selectDevice: '②Select device',
     entryInfo: '③Input information',
@@ -191,7 +195,7 @@ export default {
     timezone: 'Period of time',
     timezoneName: 'Time period name',
     baseInfo: 'Basic information',
-    timezoneSeeting: 'Time period setting',
+    timezoneSeeting: 'Update time period setting',
     copyTip: 'Copy Monday to other working days',
     portionGate: 'Distribution of the door',
     employeeAuth: 'Authorized personnel',
@@ -226,7 +230,7 @@ export default {
     doorSetting: 'Access setting',
     accData: 'Access data',
     attManager: 'Attendance ',
-    attDevice: 'Attendance device',
+    attDevice: 'Attendance Setting',
     attData: 'Attendance data',
     deviceManager: 'Device',
     deviceList: 'Device',

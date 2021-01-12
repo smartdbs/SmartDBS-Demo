@@ -1,4 +1,29 @@
 {
+  "upgradeFwVersion": {
+    "url": "/deviceUpgrade/upgrade",
+    "method": "POST",
+    "describe": "设备管理-获取固件"
+  },
+  "upgradeFwVersionHistory": {
+    "url": "/deviceUpgrade/historyList",
+    "method": "POST",
+    "describe": "设备管理-获取固件升级历史"
+  },
+  "getUpgradeFwVersionListBySn": {
+    "url": "/deviceUpgrade/newestList",
+    "method": "POST",
+    "describe": "设备管理-获取固件升列表"
+  },
+  "updateAccTimezone": {
+    "url": "/accTimezone/timezoneSetUp",
+    "method": "POST",
+    "describe": "门禁时间段-更新"
+  },
+  "loadTimezoneList": {
+    "url": "/deviceDst/getTimezoneAndTzid",
+    "method": "POST",
+    "describe": "设备管理-获取夏令时区列表数据"
+  },
   "cancelRegBio": {
     "url": "/bioTemplate/cancelRegisterBiometric",
     "method": "POST",

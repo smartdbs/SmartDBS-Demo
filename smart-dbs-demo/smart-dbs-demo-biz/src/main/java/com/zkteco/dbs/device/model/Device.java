@@ -8,8 +8,6 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.ColumnComment;
 import com.gitee.sunchenbin.mybatis.actable.annotation.ColumnType;
 import com.gitee.sunchenbin.mybatis.actable.annotation.DefaultValue;
 import com.gitee.sunchenbin.mybatis.actable.annotation.IsAutoIncrement;
-import com.gitee.sunchenbin.mybatis.actable.annotation.IsNotNull;
-import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import com.zkteco.dbs.common.base.model.BaseModel;
 import java.io.Serializable;
 import lombok.Data;
@@ -158,6 +156,13 @@ public class Device extends BaseModel<Device> {
     @ColumnType(length = 1)
     @DefaultValue("0")
     private Integer supportRemotePalmPrint;
+
+    /**
+     * 设备状态变更时间
+     */
+    @TableField
+    @ColumnComment("DBS推送数据中设备状态变化时间戳")
+    private Long changeTimeStamp;
 
     @Override
     protected Serializable pkVal() {

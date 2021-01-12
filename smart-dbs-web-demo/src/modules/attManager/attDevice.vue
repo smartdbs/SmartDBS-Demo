@@ -35,12 +35,36 @@
         </li>
       </ul>
     </div>
-
     <a-modal
       v-model="visible"
       :title="$t('att.distriEmployee')"
       @ok="bindSubmit"
+      @cancel="cancelModal"
     >
+      <a-form-model layout="inline" :model="searchForm">
+        <a-form-model-item>
+          <a-select
+            style="width: 120px"
+            v-model="searchForm.type"
+            :placeholder="$t('device.selectType')"
+          >
+            <a-select-option
+              v-for="item in optionList"
+              :value="item.key"
+              :key="item.key"
+              >{{ item.label }}</a-select-option
+            >
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item>
+          <a-input-search
+            v-model="searchForm.value"
+            :placeholder="$t('common.searchKey')"
+            enter-button
+            @search="showBind"
+          />
+        </a-form-model-item>
+      </a-form-model>
       <a-table
         style="height: 400px;overflow: auto;"
         :pagination="false"
@@ -52,6 +76,7 @@
         :columns="columns"
         :data-source="unassignedList"
         tableLayout="fixed"
+        :loading="loading"
       />
     </a-modal>
   </div>
@@ -62,11 +87,28 @@ import addDeviceList from './addDeviceList'
 export default {
   data() {
     return {
+      loading: false,
       visible: false,
       currentDivice: null,
       employeeList: [],
       selectedRowKeys: [],
       unassignedList: [],
+      searchForm: {
+        type: 0,
+        value: ''
+      },
+      optionList: [
+        {
+          key: 0,
+          label: this.$t('employee.employeeNo'),
+          attr: 'employeeNo'
+        },
+        {
+          key: 1,
+          label: this.$t('employee.formattedName'),
+          attr: 'formattedName'
+        }
+      ],
       columns: [
         {
           key: 'employeeNo',
@@ -97,6 +139,10 @@ export default {
     }
   },
   methods: {
+    cancelModal() {
+      this.unassignedList = null
+      this.visible = false
+    },
     selectItem(item) {
       if (item) {
         this.currentDivice = item
@@ -110,17 +156,36 @@ export default {
     showBind() {
       this.visible = true
       this.selectedRowKeys = []
+      this.loading = true
+      let params = {}
+      this.optionList.filter(item => {
+        if (item.key === this.searchForm.type) {
+          return (params[item.attr] = this.searchForm.value)
+        }
+      })
       this.request('unassignedList', {
-        sn: this.currentDivice.sn
+        sn: this.currentDivice.sn,
+        ...params
       })
         .then(data => {
           if (data.code === '00') {
+            this.loading = false
+            // let employeeNum = data.data
+            // if (employeeNum.length < 10) {
+            //   this.unassignedList = employeeNum
+            // } else {
+            //   this.unassignedList = employeeNum.splice(0, 8)
+            // }
             this.unassignedList = data.data
+            this.loading = false
           }
         })
         .catch(e => {
           this.errorMessage(e)
         })
+    },
+    scrollUnassignedEmployee() {
+      console.log('ssssss')
     },
     bindSubmit() {
       this.request('deviceEmployeeBind', {

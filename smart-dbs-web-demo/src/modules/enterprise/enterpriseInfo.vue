@@ -42,7 +42,7 @@
         <a-input v-model="companyInfo.email" />
       </a-form-model-item>
       <div style="text-align:right">
-        <a-button type="primary" @click.stop="updateCompanyInfo">{{
+        <a-button type="primary" v-debounce="updateCompanyInfo">{{
           $t('common.save')
         }}</a-button>
       </div>

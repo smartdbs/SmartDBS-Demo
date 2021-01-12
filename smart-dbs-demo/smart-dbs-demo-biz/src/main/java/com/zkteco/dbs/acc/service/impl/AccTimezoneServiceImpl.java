@@ -89,15 +89,19 @@ public class AccTimezoneServiceImpl extends ServiceImpl<AccTimezoneMapper, AccTi
     public void timezoneSetUp(BaseDTO<AccTimezoneVO> dto) {
         AccTimezoneVO accTimezoneVO = dto.getPayload();
 
+        Company company = companyService.getByAppKey(dbsConfig.getAppKey());
+
         //更新时间段前，先删除已存在的
         LambdaQueryWrapper<AccTimezoneDetail> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AccTimezoneDetail::getTimezoneNum, accTimezoneVO.getTimezoneNum());
         accTimezoneDetailService.remove(wrapper);
 
-        AccTimezone entity = this.getById(accTimezoneVO.getTimezoneNum());
-        Integer timezoneNum = entity.getTimezoneNum();
-        String timezoneName = entity.getTimezoneName();
-
+        Integer timezoneNum = Integer.parseInt(accTimezoneVO.getTimezoneNum());
+        String timezoneName = accTimezoneVO.getTimezoneName();
+        AccTimezone accTimezone = new AccTimezone();
+        accTimezone.setTimezoneNum(timezoneNum);
+        accTimezone.setTimezoneName(timezoneName);
+        this.updateById(accTimezone);
         // 保存
         accTimezoneVO.getDetail().forEach(detail -> {
             if(StringUtils.isNotBlank(detail.getStartTime()) || StringUtils.isNotBlank(detail.getEndTime())){
@@ -112,14 +116,16 @@ public class AccTimezoneServiceImpl extends ServiceImpl<AccTimezoneMapper, AccTi
 
         });
 
-        Company company = companyService.getByAppKey(dbsConfig.getAppKey());
 
         //  调用sdk 更新门禁时间段
         User user = new User(company.getUserName(), company.getPassword());
         List<DoorTimeZoneDetail> details = new ArrayList<>();
         accTimezoneVO.getDetail().forEach(detail -> {
-            DoorTimeZoneDetail o = new DoorTimeZoneDetail(detail.getWeek(), detail.getStartTime(), detail.getEndTime());
-            details.add(o);
+            if(StringUtils.isNotBlank(detail.getStartTime()) || StringUtils.isNotBlank(detail.getEndTime())){
+                DoorTimeZoneDetail o = new DoorTimeZoneDetail(detail.getWeek(), detail.getStartTime(), detail.getEndTime());
+                details.add(o);
+            }
+
         });
         DoorTimeZoneUpdateRequest doorTimeZoneUpdateRequest = new DoorTimeZoneUpdateRequest(timezoneNum, timezoneName, details);
         doorTimeZoneUpdateRequest.setApiUser(user);
