@@ -12,6 +12,8 @@
 
 Smart DBS官方网站：https://dbs.zkclouds.com/
 
+Smart DBS配套demo演示地址：https://demo.zkclouds.com/
+
 **工程结构**
 ```darcs 
 ├─smart-dbs-demo                        --后端工程
