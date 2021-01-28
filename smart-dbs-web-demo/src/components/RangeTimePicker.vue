@@ -7,6 +7,12 @@
       <input v-model="startValue" />
       <span>{{ $t('common.to') }}</span>
       <input v-model="endValue" />
+      <a-icon
+        v-if="startValue"
+        class="clear-btn-cla"
+        @click.stop="clearTime"
+        type="close-circle"
+      />
     </div>
 
     <zkPopper ref="showPanel" class="zk-popper-cla" :visible="showPopper">
@@ -91,7 +97,12 @@ export default {
       startHour: '',
       startMinute: '',
       endHour: '',
-      endMinute: ''
+      endMinute: '',
+      selectedThemeColor: '#6ebf50',
+      startHourColor: null,
+      startMinuteColor: null,
+      endHourColor: null,
+      endMinuteColor: null
     }
   },
   methods: {
@@ -99,32 +110,48 @@ export default {
       let res = item - 1
       let value = res < 10 ? '0' + res : '' + res
       if (type === 'startHour') {
+        this.startHourColor && (this.startHourColor.style.color = '')
         if (isNaN(parseInt(this.startMinute))) {
           this.startMinute = '00'
         }
-        // console.log('元素可见区域高', this.$refs.startHour.offsetHeight)
-        // console.log('元素可见区域高', this.$refs.startHour.scrollTop)
-        // let curEl = e.target.offsetTop / 20
-        // console.log('元素li：', curEl)
+        this.startHourColor = e.target
+        let curEl = e.target.offsetTop / 20
+        this.$refs['startHour'].scrollTop = (curEl - 5) * 20
+        // e.target.style.color = this.selectedThemeColor
         this.startHour = value
       }
       if (type == 'startMinute') {
+        this.startMinuteColor && (this.startMinuteColor.style.color = '')
         if (isNaN(parseInt(this.startHour))) {
           this.startHour = '00'
         }
+        this.startMinuteColor = e.target
+        let curEl = e.target.offsetTop / 20
+        this.$refs['startMinute'].scrollTop = (curEl - 5) * 20
+        // e.target.style.color = this.selectedThemeColor
         this.startMinute = value
       }
       if (type == 'endHour') {
+        this.endHourColor && (this.endHourColor.style.color = '')
         if (isNaN(parseInt(this.endMinute))) {
           this.endMinute = '00'
         }
+        this.endHourColor = e.target
+        let curEl = e.target.offsetTop / 20
+        this.$refs['endHour'].scrollTop = (curEl - 5) * 20
+        // e.target.style.color = this.selectedThemeColor
         this.endHour = value
       }
 
       if (type == 'endMinute') {
+        this.endMinuteColor && (this.endMinuteColor.style.color = '')
         if (isNaN(parseInt(this.endHour))) {
           this.endHour = '00'
         }
+        this.endMinuteColor = e.target
+        let curEl = e.target.offsetTop / 20
+        this.$refs['endMinute'].scrollTop = (curEl - 5) * 20
+        // e.target.style.color = this.selectedThemeColor
         this.endMinute = value
       }
       this.$emit('input', [this.startValue, this.endValue])
@@ -219,10 +246,19 @@ export default {
       }, 100)
     },
 
+    clearTime() {
+      this.startHour = ''
+      this.startMinute = ''
+      this.endHour = ''
+      this.endMinute = ''
+      this.$emit('input', [this.startValue, this.endValue])
+    },
+
     scrollTop(tag, value) {
       if (value) {
         value = parseInt(value)
       }
+
       this.$refs[tag].scrollTop = value * 20
     },
     showValue(item) {
@@ -311,6 +347,7 @@ export default {
   line-height: 32px;
   align-items: center;
   flex-wrap: nowrap;
+  position: relative;
   input {
     text-align: center;
     border: none;
@@ -321,9 +358,26 @@ export default {
     }
   }
 }
+
+.ranger-input-cla:hover {
+  .clear-btn-cla {
+    display: inline-block;
+  }
+}
+
+.clear-btn-cla {
+  position: absolute;
+  right: 5px;
+  display: none;
+}
+
 .focus-cla {
   border: 1px solid @primary-color;
   padding: 0px;
+  .clear-btn-cla {
+    display: inline-block;
+    color: @primary-color;
+  }
 }
 .zk-popper-cla {
 }

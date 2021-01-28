@@ -253,8 +253,14 @@
           <div>{{ firmwareInfo.version }}</div>
           <div>
             <ul>
-              <li v-for="item in 3" :key="item">{{ item }}</li>
+              <li
+                v-for="(item, index) in firmwareInfo.description"
+                :key="index"
+              >
+                {{ item }}
+              </li>
             </ul>
+            <!-- <div>{{ firmwareInfo.description }}</div> -->
           </div>
           <div style="text-align:center">
             <a-popconfirm
@@ -275,6 +281,7 @@
             disabled
             style="margin-top:100px"
           >
+            <!-- first step -->
             <a-step title="开始升级" disabled v-if="!isOffline">
               <a-icon
                 slot="icon"
@@ -287,7 +294,7 @@
             <a-step v-else title="升级失败">
               <a-icon type="close-circle" slot="icon" class="disable-cla" />
             </a-step>
-
+            <!-- second step -->
             <a-step :title="secondTitle" v-if="!isShowError" disabled>
               <a-icon
                 slot="icon"
@@ -303,6 +310,7 @@
               <a-icon type="close-circle" slot="icon" class="disable-cla" />
             </a-step>
 
+            <!-- third step -->
             <a-step
               title="安装中"
               v-if="!isShowSuccess && !isInstallError"
@@ -314,6 +322,7 @@
                 :spin="currentStep === 2 || currentStep === 3"
               />
             </a-step>
+
             <a-step
               title="安装失败"
               v-else-if="!isShowSuccess && isInstallError"
@@ -321,6 +330,7 @@
             >
               <a-icon type="close-circle" slot="icon" class="disable-cla" />
             </a-step>
+
             <a-step
               title="升级完成"
               v-else-if="!isInstallError && isShowSuccess"
@@ -328,6 +338,10 @@
             >
               <a-icon type="sync" slot="icon" v-if="!overThird" />
               <a-icon type="check-circle" slot="icon" v-else></a-icon>
+            </a-step>
+
+            <a-step title="升级失败" v-else-if="failUpgrade">
+              <a-icon type="close-circle" slot="icon" class="disable-cla" />
             </a-step>
           </a-steps>
           <div style="text-align:center;margin-top:15px">
@@ -339,7 +353,7 @@
             >
             <a-button
               @click.stop="upgradeAagin"
-              v-if="isShowError || isInstallError"
+              v-if="isShowError || isInstallError || isOffline"
               type="danger"
               >重试</a-button
             >
@@ -432,6 +446,7 @@ export default {
       isShowError: false, // 是否展示错误
       isShowSuccess: false,
       isInstallError: false,
+      failUpgrade: false,
       secondTitle: '下载中',
       overFirst: false, //是否完成第一步
       overSecond: false,
@@ -444,6 +459,12 @@ export default {
   mounted() {
     this.getDeviceList()
   },
+  filters: {
+    isHtml(val) {
+      console.log(val)
+      return val.replace('\n', '<br>')
+    }
+  },
   methods: {
     upgradeAagin() {
       // 升级失败 再次升级
@@ -454,9 +475,12 @@ export default {
       this.overSecond = false
       this.overThird = false
 
+      this.isOffline = false
       this.isShowError = false
       this.isInstallError = false
       this.secondTitle = '下载中'
+
+      this.failUpgrade = false
       this.upgrade()
     },
     finishUpgrade() {
@@ -466,26 +490,51 @@ export default {
       this.isUpdateFwversion = false
     },
     init() {
-      if (this.active === 0) {
-        // 初始状态
-        // this.active = 5 //模拟  3 进下载中  5 2 失败
-        // this.active = 1
-        this.currentStep = 1
-        this.overFirst = true
-        return
+      if (this.currentStep === 0) {
+        if (this.active === 0) {
+          // 初始状态
+          // this.active = 5 //模拟  3 进下载中  5 2 失败
+          // this.active = 1
+          this.currentStep = 1
+          this.overFirst = true
+          return
+        }
+
+        if (this.active === 1) {
+          //  直接成功
+          this.currentStep = 3
+          this.overFirst = true
+          this.overSecond = true
+          this.overThird = true
+          this.secondTitle = '下载完成'
+          this.isShowSuccess = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+
+        if (this.active === 5 || this.active === 2) {
+          // 直接返回失败
+          this.isOffline = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+        if (this.active === 3) {
+          // 下载中 直接进入第二步
+          this.currentStep = 1
+          this.overFirst = true
+          return
+        }
+        if (this.active === 4) {
+          // 安装中  直接进入到第三步
+          this.currentStep = 2
+          this.overFirst = true
+          this.overSecond = true
+          return
+        }
       }
-      //  直接成功
-      if (this.active === 1) {
-        this.currentStep = 3
-        this.overFirst = true
-        this.overSecond = true
-        this.overThird = true
-        this.secondTitle = '下载完成'
-        this.isShowSuccess = true
-        clearInterval(this.timer)
-        this.timer = null
-        return
-      }
+
       if (this.currentStep === 1) {
         // 下载状态
         if (this.active === 5 || this.active === 2) {
@@ -549,11 +598,18 @@ export default {
         }
       }
       if (this.currentStep === 3) {
-        // 升级完成
         if (this.active === 1) {
+          // 升级完成
           this.currentStep = 3
           this.overThird = true
           this.isShowSuccess = true
+          clearInterval(this.timer)
+          this.timer = null
+          return
+        }
+        if (this.active === 5 || this.active === 2) {
+          // 升级失败
+          this.failUpgrade = true
           clearInterval(this.timer)
           this.timer = null
           return
@@ -605,7 +661,13 @@ export default {
     closeUpgradeDrawer() {
       if (this.showUpgradeRes) {
         // 获取历史结果 是否在升级中界面
-        if (this.isShowError || this.isInstallError || this.isShowSuccess) {
+        if (
+          this.isOffline ||
+          this.isShowError ||
+          this.isInstallError ||
+          this.isShowSuccess ||
+          this.failUpgrade
+        ) {
           // 升级过程 不可关闭
           this.upgradeVisible = false
         } else {
@@ -699,6 +761,7 @@ export default {
     onTimeZoneChange(value) {
       if (value.length === 1) {
         this.addFrom.timeZone = value[0]
+        delete this.addForm.timezoneId
       } else {
         this.addFrom.timeZone = value[0]
         this.addFrom.timezoneId = value[1]
@@ -731,6 +794,7 @@ export default {
       this.isShowSuccess = false
       this.isInstallError = false
       this.isOffline = false
+      this.failUpgrade = false
 
       this.overFirst = false
       this.overSecond = false
@@ -759,6 +823,10 @@ export default {
             if (data.data.length !== 0) {
               this.isUpdateFwversion = true
               this.firmwareInfo = data.data[0] // 取升级列表第一项
+              if (this.firmwareInfo.description) {
+                let temp = this.firmwareInfo.description.split('\\n')
+                this.firmwareInfo.description = temp
+              }
             } else {
               this.isUpdateFwversion = false
             }
@@ -987,5 +1055,8 @@ export default {
   background: red;
   display: inline-block;
   border-radius: 50%;
+}
+ul {
+  list-style: none;
 }
 </style>

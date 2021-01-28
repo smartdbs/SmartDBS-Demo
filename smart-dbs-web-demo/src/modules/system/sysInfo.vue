@@ -42,23 +42,21 @@ export default {
   data() {
     return {
       appInfo: {
-        AppKey: '',
-        AppSecret: '',
-        Account: '',
-        Password: ''
+        AppKey: 'v11vf9e1b73b478gaag15ched32dy861',
+        AppSecret: 'v48696wc18g6hff2es8601',
+        Account: 'test',
+        Password: '123456'
       },
       nodeInfo: {
-        node: ''
+        node: 'api.dbs.zkclouds.com'
       },
       showAppSecret: false,
       showPassword: false,
-      AppSecret: '',
-      Password: ''
+      AppSecret: '*********************',
+      Password: '*********'
     }
   },
-  mounted() {
-    this.getSysInfos()
-  },
+
   methods: {
     showAttrs(type) {
       if (type === 'AppSecret') {
@@ -79,21 +77,6 @@ export default {
           this.Password = '*********'
         }
       }
-    },
-    getSysInfos() {
-      this.request('getSysInfo', {})
-        .then(data => {
-          if (data.code === '00') {
-            const { appInfo, nodeInfo } = data.data
-            this.appInfo = appInfo
-            this.nodeInfo = nodeInfo
-            this.AppSecret = '*********************'
-            this.Password = '*********'
-          }
-        })
-        .catch(e => {
-          this.errorMessage(e)
-        })
     }
   }
 }

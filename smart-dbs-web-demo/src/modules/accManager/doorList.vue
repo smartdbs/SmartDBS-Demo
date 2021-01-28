@@ -347,6 +347,7 @@ export default {
   methods: {
     closeModal() {
       this.pwdModal = false
+      this.remoteOpenDoorStatus = 0
       this.pwdForm.password = ''
       clearTimeout(this.timer1)
       clearTimeout(this.timer2)
@@ -501,6 +502,7 @@ export default {
         this.timer2 = setTimeout(() => {
           this.openModal = false
           this.errorMsg = data.message
+          this.closeModal()
         }, 3000)
       }
     },

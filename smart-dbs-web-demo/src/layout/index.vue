@@ -78,7 +78,6 @@ export default {
   margin: 0px 24px 24px 24px;
   background-color: #ffff;
   border-radius: 2px;
-  min-height: @content-height;
 }
 .copyright-cla {
   position: absolute;

@@ -1,6 +1,7 @@
 <template>
-  <div class="acc-data-cla">
-    <div class="acc-top-cla">
+  <topDownLayout>
+    <!-- <div class="acc-data-cla"> -->
+    <div class="acc-top-cla" slot="top">
       <a-form-model layout="inline" :model="searchForm">
         <a-form-model-item>
           <a-range-picker
@@ -51,36 +52,42 @@
         </a-button>
       </div>
     </div>
-    <div class="acc-bottom-cla">
-      <a-table
-        :pagination="false"
-        :columns="columns"
-        :data-source="tableData"
-        rowKey="id"
-        tableLayout="fixed"
-      >
-        <div slot="operator" slot-scope="record">
-          {{ isEmpty(record.operator) }}
-        </div>
-        <div slot="inOutState" slot-scope="record">
-          <span v-if="record.inOutType === 0">{{ $t('door.in') }}</span>
-          <span v-if="record.inOutType === 1">{{ $t('door.out') }}</span>
-          <span v-if="record.inOutType === 2">{{ $t('door.unkonw') }}</span>
-        </div>
-      </a-table>
+    <div slot="down">
+      <div class="acc-bottom-cla">
+        <a-table
+          :pagination="false"
+          :columns="columns"
+          :data-source="tableData"
+          rowKey="id"
+          tableLayout="fixed"
+        >
+          <div slot="operator" slot-scope="record">
+            {{ isEmpty(record.operator) }}
+          </div>
+          <div slot="inOutState" slot-scope="record">
+            <span v-if="record.inOutType === 0">{{ $t('door.in') }}</span>
+            <span v-if="record.inOutType === 1">{{ $t('door.out') }}</span>
+            <span v-if="record.inOutType === 2">{{ $t('door.unkonw') }}</span>
+          </div>
+        </a-table>
+      </div>
+      <div class="pagination-box-cla">
+        <a-pagination
+          v-model="pager.curPage"
+          show-size-changer
+          show-quick-jumper
+          :page-size.sync="pager.pageSize"
+          :total="pager.total"
+          @change="pageChange(arguments[0], arguments[1], getAccDataList)"
+          @showSizeChange="
+            pageChange(arguments[0], arguments[1], getAccDataList)
+          "
+        ></a-pagination>
+      </div>
     </div>
-    <div class="pagination-box-cla">
-      <a-pagination
-        v-model="pager.curPage"
-        show-size-changer
-        show-quick-jumper
-        :page-size.sync="pager.pageSize"
-        :total="pager.total"
-        @change="pageChange(arguments[0], arguments[1], getAccDataList)"
-        @showSizeChange="pageChange(arguments[0], arguments[1], getAccDataList)"
-      ></a-pagination>
-    </div>
-  </div>
+
+    <!-- </div> -->
+  </topDownLayout>
 </template>
 
 <script>
@@ -201,14 +208,16 @@ export default {
 /deep/ .ant-calendar-picker {
   width: 220px;
 }
+.acc-top-cla {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+}
 .acc-data-cla {
   padding: 24px;
-  .acc-top-cla {
-    display: flex;
-    justify-content: space-between;
-  }
-  .acc-bottom-cla {
-  }
+  background: #fff;
 }
 </style>
 <style lang="less">
