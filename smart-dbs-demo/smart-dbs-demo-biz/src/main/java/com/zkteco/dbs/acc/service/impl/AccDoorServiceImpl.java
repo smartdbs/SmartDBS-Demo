@@ -86,11 +86,12 @@ public class AccDoorServiceImpl extends ServiceImpl<AccDoorMapper, AccDoor> impl
                     .eq(AccDoor::getSn,sn)
                     .eq(AccDoor::getDoorNum,door.getDoorNum()),false);
             if(ObjectUtil.isNull(accDoor)){
-                accDoor.setSn(sn);
-                accDoor.setDoorName(door.getDoorName());
-                accDoor.setDoorNum(door.getDoorNum());
-                accDoor.setCompanyId(companyId);
-                this.save(accDoor);
+                AccDoor entity = new AccDoor();
+                entity.setSn(sn);
+                entity.setDoorName(door.getDoorName());
+                entity.setDoorNum(door.getDoorNum());
+                entity.setCompanyId(companyId);
+                this.save(entity);
             }
 
         });
