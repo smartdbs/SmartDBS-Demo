@@ -302,6 +302,7 @@ export default {
       let params = {
         sn: this.currentDivice.sn
       }
+
       this.request('deviceEmployeeList', params)
         .then(data => {
           if (data.code === '00') {

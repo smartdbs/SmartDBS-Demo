@@ -1,4 +1,14 @@
 {
+  "getIccPersonVerifyRecordList": {
+    "url": "/iccPersonVerifyRecord/pageList",
+    "method": "POST",
+    "describe": "人证核验-人证记录列表"
+  },
+  "getIccVerifyRecordList": {
+    "url": "/iccVerifyRecord/pageList",
+    "method": "POST",
+    "describe": "人证核验-核验记录列表"
+  },
   "upgradeFwVersion": {
     "url": "/deviceUpgrade/upgrade",
     "method": "POST",
@@ -37,7 +47,7 @@
   "deviceByEmpList": {
     "url": "/device/listByEmployee",
     "method": "POST",
-    "describe": "设备管理-员工所分配的设备列表"
+    "describe": "设备管理-人员所分配的设备列表"
   },
   "removeDoorPassword": {
     "url": "/accDoor/removeDoorPassword",
@@ -82,22 +92,22 @@
   "removeEmployee": {
     "url": "/accAuthorityEmployee/removeEmployeeAuthority",
     "method": "POST",
-    "describe": "禁权限组-移除员工"
+    "describe": "禁权限组-移除人员"
   },
   "assignEmployee": {
     "url": "/accAuthorityEmployee/saveEmployeeAuthority",
     "method": "POST",
-    "describe": "禁权限组-分配员工"
+    "describe": "禁权限组-分配人员"
   },
   "employeeUnassignList": {
     "url": "/accAuthority/employeeUnassignedList",
     "method": "POST",
-    "describe": "禁权限组-员工未分配列表"
+    "describe": "禁权限组-人员未分配列表"
   },
   "employeeAllowList": {
     "url": "/accAuthority/employeeAllocatedList",
     "method": "POST",
-    "describe": "禁权限组-员工已分配列表"
+    "describe": "禁权限组-人员已分配列表"
   },
   "removeDoor": {
     "url": "/accAuthorityDoor/removeDoorAuthority",
@@ -182,17 +192,17 @@
   "getEmployeeList": {
     "url": "/employeeEnrollment/pageList",
     "method": "POST",
-    "describe": "获取员工列表"
+    "describe": "获取人员列表"
   },
   "addEmployee": {
     "url": "/employeeEnrollment/save",
     "method": "POST",
-    "describe": "添加员工"
+    "describe": "添加人员"
   },
   "updateEmployee": {
     "url": "/employeeEnrollment/update",
     "method": "POST",
-    "describe": "编辑员工信息"
+    "describe": "编辑人员信息"
   },
   "companyInfo": {
     "url": "/company/currentCompanyInfo",
@@ -202,7 +212,7 @@
   "deleteEmployee": {
     "url": "/employeeEnrollment/remove",
     "method": "POST",
-    "describe": "删除员工"
+    "describe": "删除人员"
   },
   "getDeviceList": {
     "url": "/device/pageList",
@@ -242,32 +252,32 @@
   "deviceEmployeeList": {
     "url": "/deviceEmployee/list",
     "method": "POST",
-    "describe": "获取设备员工"
+    "describe": "获取设备人员"
   },
   "deviceEmployeeSave": {
     "url": "/deviceEmployee/save",
     "method": "POST",
-    "describe": "设备绑定员工"
+    "describe": "设备绑定人员"
   },
   "deviceEmployeeRemove": {
     "url": "/deviceEmployee/remove",
     "method": "POST",
-    "describe": "设备解绑员工"
+    "describe": "设备解绑人员"
   },
   "unassignedList": {
     "url": "/employeeEnrollment/unassignedList",
     "method": "POST",
-    "describe": "设备未绑定的员工"
+    "describe": "设备未绑定的人员"
   },
   "deviceEmployeeBind": {
     "url": "/deviceEmployee/save",
     "method": "POST",
-    "describe": "设备绑定员工"
+    "describe": "设备绑定人员"
   },
   "deviceEmployeeUnBind": {
     "url": "/deviceEmployee/remove",
     "method": "POST",
-    "describe": "解除绑定员工"
+    "describe": "解除绑定人员"
   },
   "attRecordList": {
     "url": "/attRecord/pageList",

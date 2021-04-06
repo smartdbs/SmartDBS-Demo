@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "6299193",
+      "name": "人证采集",
+      "font_class": "icon-",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "15765727",
+      "name": "人证",
+      "font_class": "renzheng",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "16364334",
+      "name": "筛选",
+      "font_class": "shaixuan",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
       "icon_id": "19216084",
       "name": "返回",
       "font_class": "fanhui",

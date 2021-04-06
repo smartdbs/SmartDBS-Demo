@@ -34,8 +34,11 @@
         show-quick-jumper
         :page-size.sync="pager.pageSize"
         :total="pager.total"
-        @change="pageChange(arguments[0], arguments[1], getAccDataList)"
-        @showSizeChange="pageChange(arguments[0], arguments[1], getAccDataList)"
+        :show-total="
+          total => `${this.$t('common.showTotal', { total: pager.total })}`
+        "
+        @change="pageChange(arguments[0], arguments[1], getPageList)"
+        @showSizeChange="pageChange(arguments[0], arguments[1], getPageList)"
       ></a-pagination>
     </div>
 
@@ -80,7 +83,11 @@
         <a-form-model-item :label="$t('acc.week0')">
           <RangeTimePicker v-model="editFrom.week0"></RangeTimePicker>
         </a-form-model-item>
-        <a-checkbox @change="copyChange" :checked="checked">
+        <a-checkbox
+          v-if="editFrom.week1.length > 1"
+          @change="copyChange"
+          :checked="checked"
+        >
           {{ $t('acc.copyTip') }}
         </a-checkbox>
       </a-form-model>

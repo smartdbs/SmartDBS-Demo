@@ -60,6 +60,9 @@
           show-quick-jumper
           :page-size.sync="pager.pageSize"
           :total="pager.total"
+          :show-total="
+            total => `${this.$t('common.showTotal', { total: pager.total })}`
+          "
           @change="pageChange(arguments[0], arguments[1], getDoorList)"
           @showSizeChange="pageChange(arguments[0], arguments[1], getDoorList)"
         ></a-pagination>

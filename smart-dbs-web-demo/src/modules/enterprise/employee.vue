@@ -1,6 +1,26 @@
-<template>
+i<template>
   <topDownLayout>
     <div class="employee-top-bar" slot="top">
+      <a-form-model layout="inline" :model="searchForm">
+        <a-form-model-item>
+          <a-select style="width:120px" v-model="searchForm.type">
+            <a-select-option
+              v-for="item in optionList"
+              :key="item.key"
+              :value="item.key"
+              >{{ $t(item.label) }}</a-select-option
+            >
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item>
+          <a-input-search
+            v-model="searchForm.value"
+            :placeholder="$t('common.searchKey')"
+            enter-button
+            @search="onSearch"
+          />
+        </a-form-model-item>
+      </a-form-model>
       <a-button @click.stop="showAdd" icon="plus" type="primary">
         {{ $t('employee.addEmployee') }}
       </a-button>
@@ -86,6 +106,9 @@
           show-quick-jumper
           :page-size.sync="pager.pageSize"
           :total="pager.total"
+          :show-total="
+            total => `${this.$t('common.showTotal', { total: pager.total })}`
+          "
           @change="pageChange(arguments[0], arguments[1], getEmployeeList)"
           @showSizeChange="
             pageChange(arguments[0], arguments[1], getEmployeeList)
@@ -132,6 +155,28 @@
                 prop="firstName"
               >
                 <a-input v-model="editForm.firstName" />
+              </a-form-model-item>
+
+              <a-form-model-item label="临时人员" prop="temporaryStatus">
+                <a-select
+                  style="width: 100%"
+                  v-model="editForm.temporaryStatus"
+                  :allowClear="true"
+                >
+                  <a-select-option value="0"> 否</a-select-option>
+                  <a-select-option value="1"> 是</a-select-option>
+                </a-select>
+              </a-form-model-item>
+
+              <a-form-model-item
+                label="证件号码"
+                prop="idCard"
+                v-if="editForm.temporaryStatus === '1'"
+              >
+                <a-input v-model="editForm.idCard" />
+              </a-form-model-item>
+              <a-form-model-item label="证件号码" v-else>
+                <a-input v-model="editForm.idCard" />
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
@@ -191,8 +236,27 @@
                   >
                 </a-select>
               </a-form-model-item>
+              <a-form-model-item label="允许进入" prop="allowStatus">
+                <a-select style="width: 100%" v-model="editForm.allowStatus">
+                  <a-select-option value="0">禁止</a-select-option>
+                  <a-select-option value="1">允许</a-select-option>
+                </a-select>
+              </a-form-model-item>
+
+              <a-form-model-item label="有效时间">
+                <a-range-picker
+                  @change="editPickOnChange"
+                  :placeholder="[$t('common.startTime'), $t('common.endTime')]"
+                  :allowClear="true"
+                  v-model="editDate"
+                  renderExtraFooter
+                  show-time
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
+              </a-form-model-item>
             </a-col>
           </a-row>
+
           <a-row>
             <div class="template-cla">
               <div class="template-item">
@@ -261,12 +325,13 @@
               </div>
             </div>
           </a-row>
+          <a-divider />
         </a-form-model>
-        <div class="foot-bottom-cla">
+        <div style="text-align:right">
           <a-button @click="visible = false">{{
             $t('common.cancelText')
           }}</a-button>
-          <a-button @click="submitEdit" type="primary">
+          <a-button style="margin:0 10px" @click="submitEdit" type="primary">
             {{ $t('common.okText') }}
           </a-button>
         </div>
@@ -280,87 +345,130 @@
         :width="500"
         @close="closeDrawer"
       >
-        <a-form-model
-          ref="addEmployeeFrom"
-          :model="addFrom"
-          :rules="rules"
-          :label-col="{ span: 8 }"
-          :wrapper-col="{ span: 14 }"
-          labelAlign="left"
-        >
-          <a-form-model-item
-            :label="$t('employee.employeeNo')"
-            prop="employeeNo"
+        <div style="overflow-y: auto;min-height:100%">
+          <a-form-model
+            ref="addEmployeeFrom"
+            layout="horizontal"
+            :model="addFrom"
+            :rules="rules"
+            :label-col="{ span: 8 }"
+            :wrapper-col="{ span: 14 }"
+            labelAlign="left"
           >
-            <a-input v-model="addFrom.employeeNo" />
-          </a-form-model-item>
-
-          <a-form-model-item :label="$t('employee.lastName')" prop="lastName">
-            <a-input v-model="addFrom.lastName" />
-          </a-form-model-item>
-
-          <a-form-model-item :label="$t('employee.firstName')" prop="firstName">
-            <a-input v-model="addFrom.firstName" />
-          </a-form-model-item>
-
-          <a-form-model-item
-            ref="cardNo"
-            :label="$t('employee.cardNo')"
-            prop="cardNo"
-          >
-            <a-input v-model="addFrom.cardNo" />
-          </a-form-model-item>
-
-          <a-form-model-item
-            ref="devicePassword"
-            :label="$t('employee.devicePassword')"
-            prop="devicePassword"
-          >
-            <a-input v-model="addFrom.devicePassword" type="password" />
-          </a-form-model-item>
-          <a-form-model-item :label="$t('employee.devicePermision')">
-            <a-select v-model="addFrom.devicePermission">
-              <a-select-option
-                v-for="item in devicePermission"
-                :key="item.key"
-                :value="item.key"
-                >{{ item.label }}</a-select-option
-              >
-            </a-select>
-          </a-form-model-item>
-          <a-form-model-item
-            ref="avatar"
-            :label="$t('employee.avatar')"
-            prop="avatar"
-          >
-            <a-upload
-              name="file"
-              list-type="picture-card"
-              class="avatar-uploader"
-              :show-upload-list="false"
-              :data="uploadObj"
-              action="/api/employee/uploadAvatar"
-              :before-upload="beforeUpload"
-              @change="handleChange(arguments[0], 'add')"
+            <a-form-model-item
+              :label="$t('employee.employeeNo')"
+              prop="employeeNo"
             >
-              <div class="avatar-cla" v-if="this.addFrom.avatar">
-                <img :src="addFrom.avatar" alt="avatar" />
-                <div class="change-avatar-cla">
-                  {{ $t('employee.changeAvatar') }}
+              <a-input v-model="addFrom.employeeNo" />
+            </a-form-model-item>
+
+            <a-form-model-item :label="$t('employee.lastName')" prop="lastName">
+              <a-input v-model="addFrom.lastName" />
+            </a-form-model-item>
+
+            <a-form-model-item
+              :label="$t('employee.firstName')"
+              prop="firstName"
+            >
+              <a-input v-model="addFrom.firstName" />
+            </a-form-model-item>
+            <a-form-model-item label="临时人员" prop="temporaryStatus">
+              <a-select
+                style="width: 100%"
+                v-model="addFrom.temporaryStatus"
+                :allowClear="true"
+              >
+                <a-select-option value="0"> 否</a-select-option>
+                <a-select-option value="1"> 是</a-select-option>
+              </a-select>
+            </a-form-model-item>
+            <a-form-model-item
+              label="证件号码"
+              prop="idCard"
+              v-if="addFrom.temporaryStatus === '1'"
+            >
+              <a-input v-model="addFrom.idCard" />
+            </a-form-model-item>
+            <a-form-model-item label="证件号码" v-else>
+              <a-input v-model="addFrom.idCard" />
+            </a-form-model-item>
+            <a-form-model-item
+              ref="cardNo"
+              :label="$t('employee.cardNo')"
+              prop="cardNo"
+            >
+              <a-input v-model="addFrom.cardNo" />
+            </a-form-model-item>
+
+            <a-form-model-item
+              ref="devicePassword"
+              :label="$t('employee.devicePassword')"
+              prop="devicePassword"
+            >
+              <a-input v-model="addFrom.devicePassword" type="password" />
+            </a-form-model-item>
+            <a-form-model-item :label="$t('employee.devicePermision')">
+              <a-select v-model="addFrom.devicePermission">
+                <a-select-option
+                  v-for="item in devicePermission"
+                  :key="item.key"
+                  :value="item.key"
+                  >{{ item.label }}</a-select-option
+                >
+              </a-select>
+            </a-form-model-item>
+            <a-form-model-item label="允许进入" prop="allowStatus">
+              <a-select style="width: 100%" v-model="addFrom.allowStatus">
+                <a-select-option value="0">禁止</a-select-option>
+                <a-select-option value="1">允许</a-select-option>
+              </a-select>
+            </a-form-model-item>
+
+            <a-form-model-item label="有效时间">
+              <a-range-picker
+                @change="pickOnChange"
+                :placeholder="[$t('common.startTime'), $t('common.endTime')]"
+                :allowClear="true"
+                v-model="date"
+                dropdownClassName="owner-dropdown-cla"
+                renderExtraFooter
+                format="YYYY-MM-DD HH:mm:ss"
+              />
+            </a-form-model-item>
+            <a-form-model-item
+              ref="avatar"
+              :label="$t('employee.avatar')"
+              prop="avatar"
+            >
+              <a-upload
+                name="file"
+                list-type="picture-card"
+                class="avatar-uploader"
+                :show-upload-list="false"
+                :data="uploadObj"
+                action="/api/employee/uploadAvatar"
+                :before-upload="beforeUpload"
+                @change="handleChange(arguments[0], 'add')"
+              >
+                <div class="avatar-cla" v-if="this.addFrom.avatar">
+                  <img :src="addFrom.avatar" alt="avatar" />
+                  <div class="change-avatar-cla">
+                    {{ $t('employee.changeAvatar') }}
+                  </div>
                 </div>
-              </div>
-              <div v-else>
-                <a-icon :type="loading ? 'loading' : 'plus'" />
-                <div class="ant-upload-text">{{ $t('employee.upload') }}</div>
-              </div>
-            </a-upload>
-          </a-form-model-item>
-        </a-form-model>
-        <div class="foot-bottom-cla">
+                <div v-else>
+                  <a-icon :type="loading ? 'loading' : 'plus'" />
+                  <div class="ant-upload-text">{{ $t('employee.upload') }}</div>
+                </div>
+              </a-upload>
+            </a-form-model-item>
+          </a-form-model>
+        </div>
+        <div class="" style="text-align:right">
           <a-button @click="addVisible = false">{{
             $t('common.cancelText')
           }}</a-button>
-          <a-button @click="submitAdd" type="primary">
+          <a-button style="margin:0 10px" @click="submitAdd" type="primary">
             {{ $t('common.okText') }}
           </a-button>
         </div>
@@ -444,9 +552,12 @@
                 data-index="type"
               >
                 <template slot-scope="type">
-                  {{
+                  <!-- {{
                     type === 0 ? $t('employee.accWord') : $t('employee.attWord')
-                  }}
+                  }} -->
+                  <span v-if="type === 0">{{ $t('employee.accWord') }}</span>
+                  <span v-if="type === 1">{{ $t('employee.attWord') }}</span>
+                  <span v-if="type === 2">人证设备</span>
                 </template>
               </a-table-column>
             </a-table>
@@ -527,6 +638,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { wsUrl } from '../../../package.json'
 export default {
   data() {
@@ -541,7 +653,10 @@ export default {
       }
     }
     return {
+      isOnCheck: false,
       loading: false,
+      date: [],
+      editDate: [],
       addImageUrl: '',
       imageUrl: '',
       uploadObj: {
@@ -550,6 +665,22 @@ export default {
       visible: false,
       addVisible: false,
       tableData: [],
+      searchForm: {
+        type: 0,
+        value: ''
+      },
+      optionList: [
+        {
+          key: 0,
+          label: this.$t('employee.employeeNo'),
+          attr: 'employeeNo'
+        },
+        {
+          key: 1,
+          label: this.$t('employee.formattedName'),
+          attr: 'formattedName'
+        }
+      ],
       columns: [
         {
           title: this.$t('employee.employeeNo'),
@@ -590,9 +721,22 @@ export default {
         cardNo: '',
         devicePassword: '',
         avatar: '',
-        devicePermission: 0
+        devicePermission: 0,
+        idCard: '',
+        temporaryStatus: '',
+        allowStatus: '',
+
+        startTime: '',
+        endTIme: ''
       },
       rules: {
+        idCard: [
+          {
+            required: true,
+            message: this.$t('common.noEmpty'),
+            trigger: 'blur'
+          }
+        ],
         devicePassword: [
           { validator: handlePass, trigger: ['blur', 'change'] }
         ],
@@ -654,7 +798,36 @@ export default {
   mounted() {
     this.getEmployeeList()
   },
+  watch: {
+    'addFrom.temporaryStatus': function(newValue) {
+      if ('1' === newValue) {
+        this.$set(this.rules, 'idCard', {
+          required: true,
+          message: this.$t('common.noEmpty'),
+          trigger: 'blur'
+        })
+      } else {
+        Vue.delete(this.rules, 'idCard')
+      }
+    }
+  },
   methods: {
+    pickOnChange(date, dateString) {
+      let startTime = new Date(dateString[0]).toISOString().split('.')
+      let endTime = new Date(dateString[1]).toISOString().split('.')
+      this.addFrom.startTime = `${startTime[0]}`
+      this.addFrom.endTime = `${endTime[0]}`
+    },
+    editPickOnChange(date, dateString) {
+      let startTime = dateString[0].split(' ')
+      let endTime = dateString[1].split(' ')
+      this.editForm.startTime = `${startTime[0]}T${startTime[1]}`
+      this.editForm.endTime = `${endTime[0]}T${endTime[1]}`
+    },
+    onSearch() {
+      this.pager.curPage = 1
+      this.getEmployeeList()
+    },
     closeDrawer() {
       this.visible = false
       this.addVisible = false
@@ -786,7 +959,21 @@ export default {
     },
     details(row) {
       this.editForm = Object.assign({}, row)
-      this.visible = true
+      try {
+        if (this.editForm.startTime && this.editForm.endTime) {
+          let startTime = this.editForm.startTime.split('+')
+          this.editForm.startTime = startTime[0]
+          let endTime = this.editForm.endTime.split('+')
+          this.editForm.endTime = endTime[0]
+          this.editDate = [startTime[0], endTime[0]]
+        } else {
+          this.editDate = []
+        }
+
+        this.visible = true
+      } catch (error) {
+        console.log(error)
+      }
     },
     removeTemplate(val) {
       val === '1' && (this.editForm.fingerCount = -1)
@@ -797,6 +984,9 @@ export default {
     submitEdit() {
       this.$refs.editEmployeeFrom.validate(valid => {
         if (valid) {
+          if (this.editForm.temporaryStatus === '0') {
+            this.editForm.idCard = ''
+          }
           this.request('updateEmployee', this.editForm)
             .then(data => {
               if (data.code === '00') {
@@ -815,6 +1005,8 @@ export default {
     },
 
     showAdd() {
+      this.onCheck = false
+      this.date = []
       this.addFrom = {
         employeeNo: '',
         firstName: '',
@@ -822,7 +1014,13 @@ export default {
         cardNo: '',
         devicePassword: '',
         avatar: '',
-        devicePermission: 0
+        devicePermission: 0,
+        idCard: '',
+        temporaryStatus: '',
+        allowStatus: '',
+
+        startTime: '',
+        endTime: ''
       }
       this.addVisible = true
     },
@@ -849,13 +1047,15 @@ export default {
 
     getEmployeeList() {
       this.$store.dispatch('showloadding', true)
-      this.request(
-        'getEmployeeList',
-        {
-          user: name
-        },
-        this.pager
-      )
+      let params = {
+        user: name
+      }
+      this.optionList.filter(item => {
+        if (item.key === this.searchForm.type) {
+          return (params[item.attr] = this.searchForm.value)
+        }
+      })
+      this.request('getEmployeeList', params, this.pager)
         .then(data => {
           if (data.code === '00') {
             this.tableData = data.data
@@ -943,10 +1143,13 @@ export default {
 </script>
 
 <style scoped lang="less">
+/deep/ .ant-calendar-picker {
+  width: 100% !important;
+}
 .employee-top-bar {
   height: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 24px;
 }

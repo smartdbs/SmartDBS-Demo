@@ -37,12 +37,16 @@
       tableLayout="fixed"
     >
       <div slot="status" slot-scope="record">
-        <span
-          :class="record.status === '0' ? 'device--offline' : 'device--online'"
-          >{{
-            record.status === '0' ? $t('door.offline') : $t('door.online')
-          }}</span
-        >
+        <template v-if="record.status !== null || record.status !== undefined">
+          <span
+            :class="
+              record.status === '0' ? 'device--offline' : 'device--online'
+            "
+            >{{
+              record.status === '0' ? $t('door.offline') : $t('door.online')
+            }}</span
+          >
+        </template>
       </div>
     </a-table>
   </div>

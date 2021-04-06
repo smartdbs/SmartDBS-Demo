@@ -18,5 +18,6 @@ export {
   QuestionCircleOutline,
   CheckCircleOutline,
   CloudDownloadOutline,
-  SyncOutline
+  SyncOutline,
+  FilterOutline
 } from '@ant-design/icons'

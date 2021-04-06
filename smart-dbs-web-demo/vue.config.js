@@ -108,7 +108,7 @@ module.exports = {
     hotOnly: false,
     proxy: {
       '/api': {
-        target: packageConfig.serviceUrl,
+        target: packageConfig.serviceUrl, //
         changeOrigin: true,
         ws: true,
         pathRewrite: {
@@ -116,7 +116,7 @@ module.exports = {
         }
       },
       '/temp': {
-        target: packageConfig.serviceUrl,
+        target: packageConfig.serviceUrl, //packageConfig.serviceUrl
         changeOrigin: true,
         ws: true,
         pathRewrite: {}

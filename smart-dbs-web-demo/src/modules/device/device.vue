@@ -17,6 +17,9 @@
             <a-select-option :value="1">
               {{ $t('device.accDevice') }}
             </a-select-option>
+            <a-select-option :value="2">
+              人证设备
+            </a-select-option>
           </a-select>
         </a-form-model-item>
 
@@ -60,6 +63,7 @@
         <div slot="deviceType" slot-scope="record">
           <span v-if="record.type === 0">{{ $t('device.attDevice') }}</span>
           <span v-if="record.type === 1">{{ $t('device.accDevice') }}</span>
+          <span v-if="record.type === 2">人证设备</span>
         </div>
         <div slot="enable" slot-scope="record">
           <span v-if="record.enable === 0" class="disable-cla">{{
@@ -120,6 +124,9 @@
           show-quick-jumper
           :page-size.sync="pager.pageSize"
           :total="pager.total"
+          :show-total="
+            total => `${this.$t('common.showTotal', { total: pager.total })}`
+          "
           @change="pageChange(arguments[0], arguments[1], getDeviceList)"
           @showSizeChange="
             pageChange(arguments[0], arguments[1], getDeviceList)
@@ -158,6 +165,9 @@
               </a-select-option>
               <a-select-option :value="1">
                 {{ $t('device.accDevice') }}
+              </a-select-option>
+              <a-select-option :value="2">
+                人证设备
               </a-select-option>
             </a-select>
           </a-form-model-item>
@@ -202,12 +212,12 @@
             {{ editRow.model }}
           </a-form-model-item>
           <a-form-model-item :label="$t('device.fwVersion')">
-            <span style="position: relative;"
+            <span style="position: relative"
               ><span class="circle-cla" v-if="isUpdateFwversion"></span
               >{{ editRow.fwVersion }}</span
             >
             <a-button
-              style="border:none"
+              style="border: none"
               icon="cloud-download"
               v-if="isUpdateFwversion"
               @click.stop="isUpgradeFirmware"
@@ -246,8 +256,12 @@
         class="edit-drawer-cla"
       >
         <div>
-          <i class="iconfont zk-icon-fanhui enable-cla" @click="goBack"></i
-          ><span style="margin-left:10px;color:black">新版功能：</span>
+          <i
+            class="iconfont zk-icon-fanhui enable-cla"
+            @click="goBack"
+            style="cursor: pointer"
+          ></i
+          ><span style="margin-left: 10px; color: black">新版功能：</span>
         </div>
         <template v-if="!showUpgradeRes">
           <div>{{ firmwareInfo.version }}</div>
@@ -262,7 +276,7 @@
             </ul>
             <!-- <div>{{ firmwareInfo.description }}</div> -->
           </div>
-          <div style="text-align:center">
+          <div style="text-align: center">
             <a-popconfirm
               title="此操作将升级固件，是否继续？"
               ok-text="是"
@@ -270,7 +284,7 @@
               @confirm="upgrade"
               @cancel="cancel"
             >
-              <a-button type="primary" style="width:140px">升级</a-button>
+              <a-button type="primary" style="width: 140px">升级</a-button>
             </a-popconfirm>
           </div>
         </template>
@@ -279,7 +293,7 @@
             labelPlacement="vertical"
             v-model="currentStep"
             disabled
-            style="margin-top:100px"
+            style="margin-top: 100px"
           >
             <!-- first step -->
             <a-step title="开始升级" disabled v-if="!isOffline">
@@ -339,12 +353,11 @@
               <a-icon type="sync" slot="icon" v-if="!overThird" />
               <a-icon type="check-circle" slot="icon" v-else></a-icon>
             </a-step>
-
             <a-step title="升级失败" v-else-if="failUpgrade">
               <a-icon type="close-circle" slot="icon" class="disable-cla" />
             </a-step>
           </a-steps>
-          <div style="text-align:center;margin-top:15px">
+          <div style="text-align: center; margin-top: 15px">
             <a-button
               @click.stop="finishUpgrade"
               type="primary"
@@ -421,7 +434,8 @@ export default {
       addFrom: {
         sn: '',
         alias: '',
-        type: 0
+        type: 0,
+        timeZone: ['+08:00']
       },
       originRow: {},
       editRow: {},
@@ -759,6 +773,7 @@ export default {
         .catch(e => this.errorMessage(e))
     },
     onTimeZoneChange(value) {
+      this.addFrom.timeZone = []
       if (value.length === 1) {
         this.addFrom.timeZone = value[0]
         delete this.addForm.timezoneId
@@ -877,7 +892,12 @@ export default {
       //保存新增
       this.$refs.addRuleForm.validate(valid => {
         if (valid) {
-          this.request('saveDevice', this.addFrom)
+          let params = Object.assign({}, this.addFrom)
+          // params.timeZone = this.addFrom.timeZone[0]
+          if (Array.isArray(params.timeZone)) {
+            params.timeZone = params.timeZone[0]
+          }
+          this.request('saveDevice', params)
             .then(data => {
               if (data.code === '00') {
                 this.addVisible = false

@@ -19,7 +19,8 @@ export default {
     validDate: '有效期',
     noData: '暂无数据',
     tips: '提示',
-    welcome: '您好，欢迎使用DBS Demo！'
+    welcome: '您好，欢迎使用DBS Demo！',
+    showTotal: '共{total}条'
   },
   door: {
     operator: '操作者',
@@ -82,9 +83,9 @@ export default {
     fingerTemplate: '指纹',
     devicePermision: '设备权限',
     remoteRegister: '远程登记',
-    addEmployee: '添加员工',
-    editEmployee: '编辑员工信息',
-    employeeNo: '工号',
+    addEmployee: '添加人员',
+    editEmployee: '编辑人员信息',
+    employeeNo: '编号',
     firstName: '名',
     lastName: '姓',
     formattedName: '姓名',
@@ -98,7 +99,7 @@ export default {
     template: '生物特征',
     devicePermission: '设备权限',
     deviceAdmin: '设备管理员',
-    deviceUser: '普通员工',
+    deviceUser: '普通人员',
     fingertemplate: '指纹模板',
     facetemplate: '可见光模板',
     nearfacetemplate: '近红外模板',
@@ -173,7 +174,7 @@ export default {
     employeeAuth: '人员授权',
     checkInTime: '打卡时间',
     export: '导出数据',
-    distriEmployee: '分配员工',
+    distriEmployee: '分配人员',
     unbindEmployee: '此操作将进行人员解绑，是否继续?',
     unbindDoor: '此操作将进行门解绑，是否继续?'
   },
@@ -193,7 +194,7 @@ export default {
     portionGate: '分配门',
     employeeAuth: '人员授权',
     permissionCroupInfo: '权限组信息',
-    distributionEmployee: '分配新员工',
+    distributionEmployee: '分配新人员',
     groupNum: '编号',
     groupName: '名称',
     permissionCroupNum: '权限组编号',
@@ -228,9 +229,12 @@ export default {
     deviceManager: '设备管理',
     deviceList: '设备管理',
     enterpriseManager: '企业管理',
-    employee: '员工管理',
+    employee: '人员管理',
     enterpriseInfo: '企业信息',
     sysManager: '系统信息',
-    sysInfo: '系统信息'
+    sysInfo: '系统信息',
+    iccManager: '人证核验',
+    iccSetting: '核验设置',
+    iccDataRecord: '数据记录'
   }
 }

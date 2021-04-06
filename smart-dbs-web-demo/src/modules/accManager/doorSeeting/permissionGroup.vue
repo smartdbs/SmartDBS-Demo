@@ -41,6 +41,9 @@
         show-quick-jumper
         :page-size.sync="pager.pageSize"
         :total="pager.total"
+        :show-total="
+          total => `${this.$t('common.showTotal', { total: pager.total })}`
+        "
         @change="pageChange(arguments[0], arguments[1], getAccAuthList)"
         @showSizeChange="pageChange(arguments[0], arguments[1], getAccAuthList)"
       ></a-pagination>
@@ -143,6 +146,7 @@
       @ok="hideAssignModal"
       @cancel="assginDoorModal = false"
       :closable="false"
+      class="assginDoor-cla"
     >
       <assignDoor ref="assignDoor" :groupNums="groupNum"></assignDoor>
     </a-modal>
@@ -195,7 +199,7 @@
       :ok-text="$t('common.okText')"
       :cancel-text="$t('common.cancelText')"
       @ok="hideEmployeeModal"
-      @cancel="employeeModalVisable = false"
+      @cancel="closeEmployee"
       :closable="false"
     >
       <assignEmployee
@@ -340,6 +344,10 @@ export default {
     }
   },
   methods: {
+    closeEmployee() {
+      this.employeeModalVisable = false
+      this.$refs.assignEmployee.closeEmp()
+    },
     toConverTime(val) {
       this.timeZoneList.filter(item => {
         if (item.timezoneNum === val) {
@@ -583,6 +591,13 @@ export default {
       })
     },
     showCreate() {
+      this.addFrom = {
+        name: '',
+        timezoneNum: '',
+        startTime: '',
+        endTime: ''
+      }
+      this.date = []
       this.addVisible = true
       this.getAccTimezone()
     }
@@ -591,9 +606,15 @@ export default {
 </script>
 
 <style scoped lang="less">
+.assginDoor-cla {
+  /deep/ .ant-modal-body {
+    height: 500px;
+    overflow: auto;
+  }
+}
 /deep/ .ant-modal-body {
   height: 500px;
-  overflow: auto;
+  // overflow: auto;
 }
 .save-btn {
   position: fixed;

@@ -20,7 +20,8 @@ export default {
     validDate: 'Validity date',
     noData: 'No Data',
     tips: 'Prompt',
-    welcome: 'Hello, welcome to use DBS Demo!'
+    welcome: 'Hello, welcome to use DBS Demo!',
+    showTotal: 'total: {total}'
   },
   door: {
     operator: 'Operator',
@@ -238,6 +239,9 @@ export default {
     employee: 'Employee',
     enterpriseInfo: 'Enteprise info',
     sysManager: 'System ',
-    sysInfo: 'System'
+    sysInfo: 'System',
+    iccManager: '人证核验',
+    iccSetting: '核验设置',
+    iccDataRecord: '数据记录'
   }
 }

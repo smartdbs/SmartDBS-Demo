@@ -251,7 +251,7 @@ export default {
       this.startMinute = ''
       this.endHour = ''
       this.endMinute = ''
-      this.$emit('input', [this.startValue, this.endValue])
+      this.$emit('input', [])
     },
 
     scrollTop(tag, value) {

@@ -110,7 +110,7 @@ export default {
     getDeviceList() {
       //获取设备列表
       let params = {
-        type: 0
+        type: 2
       }
       if (this.searchForm.valueType === 'deviceSn') {
         params.sn = this.searchForm.value

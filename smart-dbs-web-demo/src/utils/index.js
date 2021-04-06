@@ -44,3 +44,23 @@ export const getCurrentTime = () => {
     date.getSeconds()
   )
 }
+
+export const getStartTime = data => {
+  if (typeof data === 'number') {
+    data = new Date(data)
+  }
+  if (!data || !(data instanceof Date)) {
+    data = new Date()
+  }
+  return new Date(data.toLocaleDateString()).getTime()
+}
+
+export const getEndTime = data => {
+  if (typeof data === 'number') {
+    data = new Date(data)
+  }
+  if (!data || !(data instanceof Date)) {
+    data = new Date()
+  }
+  return new Date(data.toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1
+}

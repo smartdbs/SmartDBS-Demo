@@ -35,18 +35,23 @@
       }"
       rowKey="id"
       tableLayout="fixed"
-      style="height: 400px;overflow: auto;"
+      style="height: 400px; overflow: auto"
       :loading="loading"
     >
-      <div slot="status" slot-scope="record">
-        <span
-          :class="record.status === '0' ? 'device--offline' : 'device--online'"
-          >{{
-            record.status === '0' ? $t('door.offline') : $t('door.online')
-          }}</span
-        >
-      </div>
     </a-table>
+    <a-row>
+      <a-col :span="6"
+        ><span
+          >共{{ showLength }}/{{ orginUnassignedList.length }}条</span
+        ></a-col
+      >
+      <a-col :span="12" style="text-align: center">
+        <span v-if="!noData" @click="loadMore" class="load-more-cla">
+          点击加载更多
+        </span>
+        <span v-else>已经到底了</span>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -57,6 +62,11 @@ export default {
     groupNums: {
       handler() {},
       immediate: true
+    }
+  },
+  computed: {
+    showLength() {
+      return this.tableData.length
     }
   },
   data() {
@@ -79,6 +89,7 @@ export default {
       },
       loading: false,
       tableData: [],
+      orginUnassignedList: [],
       columns: [
         {
           title: this.$t('employee.employeeNo'),
@@ -90,10 +101,51 @@ export default {
         }
       ],
       selectedRowKeys: [],
-      selectedRow: []
+      selectedRow: [],
+      params: {
+        curPage: 1, // 当前页数
+        pageSize: 50, // 一次加载多少
+        count: 0 // 总页数
+      },
+      noData: false,
+      timer: null
     }
   },
   methods: {
+    closeEmp() {
+      this.onData = false
+      this.tableData = []
+      this.searchForm.type = 0
+      this.searchForm.value = ''
+    },
+    loadMore() {
+      if (this.timer !== null) {
+        return
+      }
+      if (this.params.curPage > this.params.count) {
+        this.noData = true
+        return
+      }
+      this.loading = true
+      let curSize =
+        this.params.curPage === 1
+          ? this.params.pageSize
+          : this.params.curPage * this.params.pageSize
+
+      this.params.curPage += 1
+
+      let newPageData = this.orginUnassignedList.slice(
+        curSize,
+        curSize + this.params.pageSize
+      )
+
+      this.timer = setTimeout(() => {
+        this.tableData = this.tableData.concat(newPageData) // 合并数据
+        this.loading = false
+        clearTimeout(this.timer)
+        this.timer = null
+      }, 1500)
+    },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRow = selectedRows
@@ -112,10 +164,21 @@ export default {
       this.loading = true
       this.request('employeeUnassignList', parmas)
         .then(data => {
+          this.noData = false
           if (data.code === '00') {
+            let employeeNum = data.data
+            this.orginUnassignedList = employeeNum
+            this.params.curPage = 1
+            this.params.count = Math.ceil(
+              this.orginUnassignedList.length / this.params.pageSize
+            )
+            if (employeeNum.length < this.params.pageSize) {
+              this.tableData = employeeNum
+            } else {
+              this.tableData = employeeNum.slice(0, this.params.pageSize)
+            }
             this.loading = false
-            this.tableData = data.data
-            this.loading = false
+            // this.tableData = data.data
           } else {
             this.errorMessage(data.message)
           }
@@ -145,6 +208,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-.employee_cla {
+.load-more-cla {
+  &:hover {
+    cursor: pointer;
+    color: @primary-color;
+  }
 }
 </style>

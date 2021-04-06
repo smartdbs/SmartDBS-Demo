@@ -2,8 +2,8 @@
   "name": "smart-dbs-web-demo",
   "version": "0.1.0",
   "private": true,
-  "serviceUrl": "https://12.0.0.1:8801/",
-  "wsUrl": "wss://127.0.0.1:8801/",
+  "serviceUrl": "http://127.0.0.1:8801/",
+  "wsUrl": "ws://127.0.0.1:8801/",
   "scripts": {
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
