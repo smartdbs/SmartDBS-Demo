@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zkteco.dbs.icc.dao.IccPersonVerifyRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zkteco.dbs.icc.vo.IccPersonVerifyRecordVO"/>
+    <resultMap id="ExcelResultMap" type="com.zkteco.dbs.icc.vo.IccPersonVerifyRecordExcel"/>
+    <sql id="column">
+        v.id,
+        v.company_id as companyId,
+        v.sn,
+        v.id_card as idCard,
+        v.card_type as cardType,
+        v.first_name as firstName,
+        v.last_name as lastName,
+        v.formatted_name as formattedName,
+        v.gender,
+        v.nation,
+        v.birth,
+        v.address,
+        v.depart,
+        v.validity_time as validityTime,
+        v.verify_mode as verifyMode,
+        v.time,
+        v.time_stamp as timeStamp,
+        v.status,
+        v.temperature,
+        v.mask_status as maskStatus
+    </sql>
+
+    <sql id="excelColumn">
+        v.sn,
+        v.first_name as firstName,
+        v.verify_mode as verifyMode,
+        v.time,
+        v.status,
+        v.temperature,
+        v.mask_status as maskStatus
+    </sql>
+
+    <select id="pageListSql" resultMap="BaseResultMap">
+        select
+        <include refid="column"/>
+        from icc_person_verify_record v
+        where 1=1
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and v.company_id = #{params.companyId}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and v.sn = #{params.sn}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.idCard)">
+            and v.id_card = #{params.idCard}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.name)">
+            and v.first_name = #{params.name}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.status)">
+            and v.status = #{params.status}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.startTime)">
+            and v.time_stamp <![CDATA[ >= ]]> #{params.startTime}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.endTime)">
+            and v.time_stamp <![CDATA[ <= ]]> #{params.endTime}
+        </if>
+        ORDER BY v.time_stamp DESC
+    </select>
+
+    <select id="listSql" resultMap="ExcelResultMap">
+        select
+        <include refid="column"/>
+        from icc_person_verify_record v
+        where 1=1
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.companyId)">
+            and v.company_id = #{params.companyId}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.sn)">
+            and v.sn = #{params.sn}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.idCard)">
+            and v.id_card = #{params.idCard}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.name)">
+            and v.first_name = #{params.name}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.status)">
+            and v.status = #{params.status}
+        </if>
+
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.startTime)">
+            and v.time_stamp <![CDATA[ >= ]]> #{params.startTime}
+        </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.endTime)">
+            and v.time_stamp <![CDATA[ <= ]]> #{params.endTime}
+        </if>
+        ORDER BY v.time_stamp DESC
+    </select>
+</mapper>

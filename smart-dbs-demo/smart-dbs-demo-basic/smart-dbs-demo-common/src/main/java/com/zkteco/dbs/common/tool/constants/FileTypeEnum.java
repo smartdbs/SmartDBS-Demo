@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * FileTypeEnum
  *
- * @author sheldon.wu
+ * @author able.lee
  * @date 2020/11/26 17:20
  * @since 1.0.0
  */

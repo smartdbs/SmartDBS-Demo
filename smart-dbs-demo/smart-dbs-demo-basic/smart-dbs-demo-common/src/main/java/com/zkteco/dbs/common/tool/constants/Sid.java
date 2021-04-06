@@ -62,7 +62,19 @@ public enum Sid {
     /**
      * 卡信息
      */
-    PUNCH_CARD("dse.push.employee.card");
+    PUNCH_CARD("dse.push.employee.card"),
+
+
+    /**
+     * 核验记录
+     */
+    VERIFY_RECORD("dse.push.icc.verifyRecord"),
+
+    /**
+     * 人证记录
+     */
+    PERSON_VERIFY_RECORD("dse.push.icc.personVerifyRecord");
+
 
     /**
      * 服务id

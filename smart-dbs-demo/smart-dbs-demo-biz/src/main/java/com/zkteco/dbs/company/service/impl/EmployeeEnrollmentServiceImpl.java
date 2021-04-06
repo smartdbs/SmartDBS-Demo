@@ -19,6 +19,7 @@ import com.zkteco.dbs.common.tool.constants.SysConstants;
 import com.zkteco.dbs.common.utils.PBKDF2Utils;
 import com.zkteco.dbs.common.utils.PagingUtil;
 import com.zkteco.dbs.common.utils.ResultUtil;
+import com.zkteco.dbs.common.utils.TimezoneUtil;
 import com.zkteco.dbs.company.dao.EmployeeEnrollmentMapper;
 import com.zkteco.dbs.company.dto.EmployeeEnrollmentDTO;
 import com.zkteco.dbs.company.model.BioTemplate;
@@ -151,6 +152,12 @@ public class EmployeeEnrollmentServiceImpl extends ServiceImpl<EmployeeEnrollmen
 
         // 保存员工基本信息
         Employee employee = new Employee();
+        employee.setIdCard(dto.getIdCard());
+        employee.setCardType(dto.getCardType());
+        employee.setTemporaryStatus(dto.getTemporaryStatus());
+        employee.setAllowStatus(dto.getAllowStatus());
+        employee.setStartTime(StringUtils.isNotBlank(dto.getStartTime()) ? dto.getStartTime() + TimezoneUtil.getStandardOffset() : null);
+        employee.setEndTime(StringUtils.isNotBlank(dto.getEndTime()) ? dto.getEndTime() + TimezoneUtil.getStandardOffset() : null);
         employee.setCompanyId(companyId);
         employee.setEmployeeNo(dto.getEmployeeNo());
         employee.setFirstName(dto.getFirstName());
@@ -190,6 +197,12 @@ public class EmployeeEnrollmentServiceImpl extends ServiceImpl<EmployeeEnrollmen
 
         // 更新员工信息
         Employee ext = employeeService.getById(dto.getId());
+        ext.setIdCard(dto.getIdCard());
+        ext.setCardType(dto.getCardType());
+        ext.setTemporaryStatus(dto.getTemporaryStatus());
+        ext.setAllowStatus(dto.getAllowStatus());
+        ext.setStartTime(StringUtils.isNotBlank(dto.getStartTime()) ? dto.getStartTime() + TimezoneUtil.getStandardOffset() : null);
+        ext.setEndTime(StringUtils.isNotBlank(dto.getEndTime()) ? dto.getEndTime() + TimezoneUtil.getStandardOffset() : null);
         ext.setFirstName(dto.getFirstName());
         ext.setLastName(dto.getLastName());
         ext.setFormattedName(dto.getLastName() + "." + dto.getFirstName());
@@ -289,6 +302,12 @@ public class EmployeeEnrollmentServiceImpl extends ServiceImpl<EmployeeEnrollmen
         employeeUpdateRequest.setDevicePassword(employeeEnrollment.getDevicePassword());
         employeeUpdateRequest.setDevicePasswordEncryption(employeeEnrollment.getDevicePasswordEncryption());
         employeeUpdateRequest.setDevicePasswordSalt(employeeEnrollment.getDevicePasswordSalt());
+        employeeUpdateRequest.setIdCard(employee.getIdCard());
+        employeeUpdateRequest.setCardType(employee.getCardType());
+        employeeUpdateRequest.setTemporaryStatus(employee.getTemporaryStatus());
+        employeeUpdateRequest.setAllowStatus(employee.getAllowStatus());
+        employeeUpdateRequest.setStartTime(employee.getStartTime());
+        employeeUpdateRequest.setEndTime(employee.getEndTime());
         User user = new User(company.getUserName(), company.getPassword());
         employeeUpdateRequest.setApiUser(user);
         DBSApi.dbsClient.getClientProfile().setLanguage(Language.getByLang(lang));

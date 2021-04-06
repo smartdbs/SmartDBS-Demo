@@ -94,9 +94,8 @@ public class AccAuthorityDoorServiceImpl extends ServiceImpl<AccAuthorityDoorMap
                 new DoorPermissionGroupRemoveDoorRequest(entity.getGroupNum(), entity.getSn(), doorNums);
         doorPermissionGroupRemoveDoorRequest.setApiUser(user);
         DBSApi.dbsClient.getClientProfile().setLanguage(Language.getByLang(dto.getLang()));
-        DBSApi.dbsClient.doorPermissionGroupRemoveDoor(doorPermissionGroupRemoveDoorRequest);
-
-
+        Message message =  DBSApi.dbsClient.doorPermissionGroupRemoveDoor(doorPermissionGroupRemoveDoorRequest);
+        ResultUtil.handleDbsResultError(message);
     }
 
     @Override
