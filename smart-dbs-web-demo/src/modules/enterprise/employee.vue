@@ -1,4 +1,4 @@
-i<template>
+<template>
   <topDownLayout>
     <div class="employee-top-bar" slot="top">
       <a-form-model layout="inline" :model="searchForm">
@@ -523,6 +523,14 @@ i<template>
             >
               <i class="icon iconfont zk-icon-ic_zw"></i>
               <p>{{ $t('employee.regPlam') }}</p>
+            </div>
+            <div
+              class="reg-type-item"
+              :class="{ 'checked-type': biologicForm.type === 2 }"
+              @click="selectType(2)"
+            >
+              <i class="icon iconfont zk-icon-ic_rl"></i>
+              <p>近红外登记</p>
             </div>
           </div>
           <div
