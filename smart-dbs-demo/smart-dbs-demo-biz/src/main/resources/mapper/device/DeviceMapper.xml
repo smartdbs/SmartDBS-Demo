@@ -72,6 +72,9 @@
         <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.supportRemoteFacePhoto)">
             and d.support_remote_face_photo =#{params.supportRemoteFacePhoto}
         </if>
+        <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.supportRemoteNearInfraredFace)">
+            and d.support_remote_near_infrared_face =#{params.supportRemoteNearInfraredFace}
+        </if>
         <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.supportRemoteFinger)">
             and d.support_remote_finger =#{params.supportRemoteFinger}
         </if>
