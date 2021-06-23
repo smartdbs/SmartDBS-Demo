@@ -98,7 +98,7 @@ public class BioTemplateServiceImpl extends ServiceImpl<BioTemplateMapper, BioTe
     public void cancelRegisterBiometric(BaseDTO<RegisterBiometricDTO> dto) {
         RegisterBiometricDTO registerBiometricDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(registerBiometricDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(registerBiometricDTO.getSn(), "E11", dto.getLang());
 
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
 
@@ -115,9 +115,9 @@ public class BioTemplateServiceImpl extends ServiceImpl<BioTemplateMapper, BioTe
     public Map<String, String> registerBiometric(BaseDTO<RegisterBiometricDTO> dto) {
         RegisterBiometricDTO registerBiometricDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(registerBiometricDTO.getSn(), "E11", dto.getLang());
-        ResultUtil.handldBlankError(registerBiometricDTO.getEmployeeNo(), "E12", dto.getLang());
-        ResultUtil.handldBlankError(registerBiometricDTO.getType(), "E29", dto.getLang());
+        ResultUtil.handleBlankError(registerBiometricDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(registerBiometricDTO.getEmployeeNo(), "E12", dto.getLang());
+        ResultUtil.handleBlankError(registerBiometricDTO.getType(), "E29", dto.getLang());
 
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
 

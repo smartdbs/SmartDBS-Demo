@@ -113,6 +113,7 @@
         <if test="@com.zkteco.dbs.common.utils.Ognl@isNotEmpty(params.formattedName)">
             and e.formatted_name =#{params.formattedName}
         </if>
+        order by e.employee_no desc
 
     </select>
 

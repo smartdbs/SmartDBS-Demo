@@ -55,8 +55,8 @@ public class DeviceEmployeeServiceImpl extends ServiceImpl<DeviceEmployeeMapper,
         String sn = deviceEmployeeDTO.getSn();
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
-        ResultUtil.handldBlankError(sn, "E11", dto.getLang());
-        ResultUtil.handldNullError(employeeNos, "E12", dto.getLang());
+        ResultUtil.handleBlankError(sn, "E11", dto.getLang());
+        ResultUtil.handleNullError(employeeNos, "E12", dto.getLang());
         //demo端保存设备员工关系
         employeeNos.stream().forEach(employeeNo -> {
             DeviceEmployee entity = new DeviceEmployee();
@@ -81,8 +81,8 @@ public class DeviceEmployeeServiceImpl extends ServiceImpl<DeviceEmployeeMapper,
     public void remove(BaseDTO<DeviceEmployeeDTO> dto) {
         String sn = dto.getPayload().getSn();
         String employeeNo = dto.getPayload().getEmployeeNo();
-        ResultUtil.handldBlankError(sn, "E11", dto.getLang());
-        ResultUtil.handldBlankError(employeeNo, "E12", dto.getLang());
+        ResultUtil.handleBlankError(sn, "E11", dto.getLang());
+        ResultUtil.handleBlankError(employeeNo, "E12", dto.getLang());
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         this.baseMapper.delete(new LambdaQueryWrapper<DeviceEmployee>()

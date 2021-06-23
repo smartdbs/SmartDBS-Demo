@@ -148,7 +148,7 @@ public class EmployeeEnrollmentServiceImpl extends ServiceImpl<EmployeeEnrollmen
         String companyId = company.getId();
         Employee ext = employeeService.getByCompanyIdAndEmployeeNo(companyId, dto.getEmployeeNo(), vo.getLang());
         // 员工工号已存在
-        ResultUtil.handldNoNullError(ext, "E18", vo.getLang());
+        ResultUtil.handleNoNullError(ext, "E18", vo.getLang());
 
         // 保存员工基本信息
         Employee employee = new Employee();

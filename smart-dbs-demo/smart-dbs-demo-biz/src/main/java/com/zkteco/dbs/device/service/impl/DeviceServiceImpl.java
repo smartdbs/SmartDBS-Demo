@@ -72,9 +72,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void save(BaseDTO<DeviceDTO> dto) {
         DeviceDTO deviceDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(deviceDTO.getSn(), "E11", dto.getLang());
-        ResultUtil.handldBlankError(deviceDTO.getAlias(), "E13", dto.getLang());
-        ResultUtil.handldNullError(deviceDTO.getType(), "E14", dto.getLang());
+        ResultUtil.handleBlankError(deviceDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(deviceDTO.getAlias(), "E13", dto.getLang());
         //判断设备是否已经存在
         Device device = baseMapper.selectOne(new LambdaQueryWrapper<Device>().eq(Device::getSn, deviceDTO.getSn()));
         ResultUtil.handleExistsError(device, "E15", dto.getLang());
@@ -105,13 +104,13 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void remove(BaseDTO<DeviceDTO> dto) {
         String sn = dto.getPayload().getSn();
         //检查参数是否合法
-        ResultUtil.handldBlankError(sn, "E11", dto.getLang());
+        ResultUtil.handleBlankError(sn, "E11", dto.getLang());
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         String companyId = company.getId();
         //判断设备是否已经存在
         Device device = baseMapper.selectOne(new LambdaQueryWrapper<Device>().eq(Device::getCompanyId, companyId).eq(Device::getSn, sn));
-        ResultUtil.handldNullError(device, "E16", dto.getLang());
+        ResultUtil.handleNullError(device, "E16", dto.getLang());
         //删除demo端设备信息
         this.removeById(device.getId());
         //删除demo端设备员工关系信息
@@ -148,14 +147,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void update(BaseDTO<DeviceDTO> dto) {
         DeviceDTO deviceDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(deviceDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(deviceDTO.getSn(), "E11", dto.getLang());
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         //判断设备是否已经存在
         Device device = baseMapper.selectOne(new LambdaQueryWrapper<Device>()
                 .eq(Device::getCompanyId, company.getId())
                 .eq(Device::getSn, deviceDTO.getSn()));
-        ResultUtil.handldNullError(device, "E16", dto.getLang());
+        ResultUtil.handleNullError(device, "E16", dto.getLang());
         //更新demo端设备信息
         device.setAlias(deviceDTO.getAlias());
         this.updateById(device);
@@ -175,7 +174,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void disable(BaseDTO<DeviceDTO> dto) {
         String sn = dto.getPayload().getSn();
         //检查参数是否合法
-        ResultUtil.handldBlankError(sn, "E11", dto.getLang());
+        ResultUtil.handleBlankError(sn, "E11", dto.getLang());
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         //判断设备是否已经存在
@@ -200,14 +199,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void enable(BaseDTO<DeviceDTO> dto) {
         String sn = dto.getPayload().getSn();
         //检查参数是否合法
-        ResultUtil.handldBlankError(sn, "E11", dto.getLang());
+        ResultUtil.handleBlankError(sn, "E11", dto.getLang());
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         //判断设备是否已经存在
         Device device = baseMapper.selectOne(new LambdaQueryWrapper<Device>()
                 .eq(Device::getCompanyId, company.getId())
                 .eq(Device::getSn, sn));
-        ResultUtil.handldNullError(device, "E16", dto.getLang());
+        ResultUtil.handleNullError(device, "E16", dto.getLang());
         //更新demo端设备信息
         device.setEnable(SysConstants.ENABLE);
         this.updateById(device);
@@ -226,14 +225,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void reboot(BaseDTO<DeviceDTO> dto) {
         String sn = dto.getPayload().getSn();
         //检查参数是否合法
-        ResultUtil.handldBlankError(sn, "E11", dto.getLang());
+        ResultUtil.handleBlankError(sn, "E11", dto.getLang());
         // 查询企业信息
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         //判断设备是否已经存在
         Device device = baseMapper.selectOne(new LambdaQueryWrapper<Device>()
                 .eq(Device::getCompanyId, company.getId())
                 .eq(Device::getSn, sn));
-        ResultUtil.handldNullError(device, "E16", dto.getLang());
+        ResultUtil.handleNullError(device, "E16", dto.getLang());
         //更新dbs端设备信息
         User apiUser = new User(company.getUserName(), company.getPassword());
         DeviceRebootRequest deviceRebootRequest = new DeviceRebootRequest(sn);
@@ -248,8 +247,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public List<DeviceVO> listByEmployee(BaseDTO<DeviceDTO> dto) {
         DeviceDTO deviceDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(deviceDTO.getEmployeeNo(), "E12", dto.getLang());
-        ResultUtil.handldBlankError(deviceDTO.getBiometricType(), "E29", dto.getLang());
+        ResultUtil.handleBlankError(deviceDTO.getEmployeeNo(), "E12", dto.getLang());
+        ResultUtil.handleBlankError(deviceDTO.getBiometricType(), "E29", dto.getLang());
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
         deviceDTO.setCompanyId(company.getId());
         if (SysConstants.FINGER_PRINT.equals(deviceDTO.getBiometricType())) {
@@ -257,6 +256,9 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         }
         if (SysConstants.VISIBLE_FACE.equals(deviceDTO.getBiometricType())) {
             deviceDTO.setSupportRemoteFacePhoto(1);
+        }
+        if (SysConstants.FACE.equals(deviceDTO.getBiometricType())) {
+            deviceDTO.setSupportRemoteNearInfraredFace(1);
         }
         if (SysConstants.PALM_PRINT.equals(deviceDTO.getBiometricType())) {
             deviceDTO.setSupportRemotePalmPrint(1);

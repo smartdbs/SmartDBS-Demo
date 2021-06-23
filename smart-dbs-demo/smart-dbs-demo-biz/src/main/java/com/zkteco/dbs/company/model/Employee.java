@@ -138,6 +138,13 @@ public class Employee extends BaseModel<Employee> {
     @ColumnComment("白名单人员在有效时间区间内，允许核验成功总次数，每核验成功一次，总次数-1")
     private String validCount;
 
+    /**
+     * 是否启用人证功能
+     */
+    @TableField
+    @ColumnComment("是否启用人证功能")
+    private Boolean iccFunOn;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

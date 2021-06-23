@@ -70,7 +70,7 @@ public class DoorTransactionRecordProcessor implements DataProcessor {
             log.setTimeStamp(Timestamp.valueOf(time).getTime() / 1000);
             log.setInOutType(Integer.parseInt(transaction.getInOutState()));
             log.setVerified(Integer.parseInt(transaction.getVerified()));
-            log.setEventCode(Integer.parseInt(transaction.getEventCode()));
+            log.setEventCode(transaction.getEventCode());
             log.setCompanyId(companyId);
             accTransactionLogService.save(log);
         });

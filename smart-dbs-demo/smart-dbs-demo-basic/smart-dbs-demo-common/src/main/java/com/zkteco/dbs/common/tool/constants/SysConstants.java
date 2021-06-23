@@ -107,4 +107,6 @@ public class SysConstants {
      * 未知
      */
     public static final String UNKNOWN = "unknown";
+
+    public static final String QR_CODE_NAME = "/Qr.jpg";
 }

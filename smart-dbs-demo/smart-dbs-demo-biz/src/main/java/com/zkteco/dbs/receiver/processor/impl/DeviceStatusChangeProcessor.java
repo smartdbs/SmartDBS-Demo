@@ -71,10 +71,10 @@ public class DeviceStatusChangeProcessor implements DataProcessor {
                 .eq(Device::getCompanyId, company.getId())
                 .eq(Device::getSn, deviceStatusChange.getSn()));
         if (device == null) {
-            ResultUtil.handldErrorInfo("E17", null);
+            ResultUtil.handleErrorInfo("E17", null);
         }
         //判断设备状态推送时间是否为最新
-        if (ObjectUtil.isEmpty(device.getChangeTimeStamp()) || (device.getChangeTimeStamp() < deviceStatusChange.getChangeTimeStamp())) {
+        if (ObjectUtil.isEmpty(device.getChangeTimeStamp()) || (device.getChangeTimeStamp() <= deviceStatusChange.getChangeTimeStamp())) {
             //若设备为重置状态，则删除demo端相关设备信息
             if (SysConstants.RESET == deviceStatusChange.getStatus().intValue()) {
                 DeviceDTO deviceDTO = new DeviceDTO();
@@ -95,15 +95,16 @@ public class DeviceStatusChangeProcessor implements DataProcessor {
                 DeviceQueryResponse deviceQueryResponse = res.getPayload().getResults().get(0);
                 DeviceQueryDetails deviceQueryDetails = deviceQueryResponse.getDetails();
                 device.setFwVersion(deviceQueryResponse.getFwVersion());
-                device.setType(Integer.valueOf(deviceQueryResponse.getType()).intValue());
+                device.setType(Integer.valueOf(deviceQueryResponse.getType()));
                 device.setIpAddress(deviceQueryResponse.getRemoteIp());
                 device.setLocalIp(deviceQueryResponse.getLocalIp());
                 device.setModel(deviceQueryDetails.getModel());
-                device.setProtocol(Integer.valueOf(deviceQueryDetails.getProtocol()).intValue());
+                device.setProtocol(Integer.valueOf(deviceQueryDetails.getProtocol()));
                 device.setMac(deviceQueryDetails.getMacAddress());
-                device.setSupportRemoteFacePhoto(Integer.valueOf(deviceQueryDetails.getSupportRemoteFacePhoto()).intValue());
-                device.setSupportRemoteFinger(Integer.valueOf(deviceQueryDetails.getSupportFinger()).intValue());
-                device.setSupportRemotePalmPrint(Integer.valueOf(deviceQueryDetails.getSupportRemotePalmPrint()).intValue());
+                device.setSupportRemoteFacePhoto(Integer.valueOf(deviceQueryDetails.getSupportRemoteFacePhoto()));
+                device.setSupportRemoteNearInfraredFace(Integer.valueOf(deviceQueryDetails.getSupportRemoteFace()));
+                device.setSupportRemoteFinger(Integer.valueOf(deviceQueryDetails.getSupportRemoteFinger()));
+                device.setSupportRemotePalmPrint(Integer.valueOf(deviceQueryDetails.getSupportRemotePalmPrint()));
                 deviceService.updateById(device);
             }
         }

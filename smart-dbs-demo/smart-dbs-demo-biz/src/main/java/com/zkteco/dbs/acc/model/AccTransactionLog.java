@@ -54,7 +54,7 @@ public class AccTransactionLog extends BaseModel<AccTransactionLog> {
      */
     @TableField(value = "event_code")
     @ColumnComment("事件码")
-    private Integer eventCode;
+    private String eventCode;
 
     /**
      * 事件码

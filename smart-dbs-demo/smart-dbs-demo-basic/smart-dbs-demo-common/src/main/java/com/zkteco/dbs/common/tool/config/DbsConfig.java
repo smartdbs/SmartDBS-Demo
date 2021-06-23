@@ -65,4 +65,7 @@ public class DbsConfig {
 
     @Value("${dbs.attRecord.cron:0 0/10 * * * ? }")
     private String attRecordCron;
+
+    @Value("${dbs.demo.endpoint}")
+    private String demoEndpoint;
 }

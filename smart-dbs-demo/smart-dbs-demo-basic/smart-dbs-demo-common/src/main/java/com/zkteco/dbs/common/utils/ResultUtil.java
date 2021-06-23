@@ -26,7 +26,7 @@ public class ResultUtil {
      * @param code
      * @param lang
      */
-    public static void handldErrorInfo(String code, String lang) {
+    public static void handleErrorInfo(String code, String lang) {
         throw new BusinessException(code, lang);
     }
 
@@ -36,7 +36,7 @@ public class ResultUtil {
      * @param code
      * @param lang
      */
-    public static void handldNullError(@Nullable Object object, String code, String lang) {
+    public static void handleNullError(@Nullable Object object, String code, String lang) {
         if (object == null) {
             throw new BusinessException(code, lang);
         }
@@ -48,7 +48,7 @@ public class ResultUtil {
      * @param code
      * @param lang
      */
-    public static void handldNoNullError(@Nullable Object object, String code, String lang) {
+    public static void handleNoNullError(@Nullable Object object, String code, String lang) {
         if (object != null) {
             throw new BusinessException(code, lang);
         }
@@ -60,7 +60,7 @@ public class ResultUtil {
      * @param code
      * @param lang
      */
-    public static void handldBlankError(@Nullable String object, String code, String lang) {
+    public static void handleBlankError(@Nullable String object, String code, String lang) {
         if (StringUtils.isBlank(object)) {
             throw new BusinessException(code, lang);
         }

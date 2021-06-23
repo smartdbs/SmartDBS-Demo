@@ -68,14 +68,14 @@ public class DeviceInitProcessor implements DataProcessor {
                 .eq(Device::getCompanyId, company.getId())
                 .eq(Device::getSn, deviceInit.getSn()));
         if (device == null) {
-            ResultUtil.handldErrorInfo("E17", null);
+            ResultUtil.handleErrorInfo("E17", null);
         }
         device.setAlias(deviceInit.getAlais());
         device.setStatus(deviceInit.getStatus().intValue());
         device.setEnable(deviceInit.getEnable().intValue());
         device.setModel(deviceInit.getModel());
         device.setIpAddress(deviceInit.getRemoteIp());
-        device.setType(Integer.valueOf(deviceInit.getType()).intValue());
+        device.setType(Integer.valueOf(deviceInit.getType()));
         User apiUser = new User(company.getUserName(), company.getPassword());
         DeviceQueryRequest deviceQueryRequest = new DeviceQueryRequest(deviceInit.getSn(), SysConstants.NEED_DETAILS);
         deviceQueryRequest.setApiUser(apiUser);
@@ -87,10 +87,15 @@ public class DeviceInitProcessor implements DataProcessor {
         device.setFwVersion(deviceQueryResponse.getFwVersion());
         device.setLocalIp(deviceQueryResponse.getLocalIp());
         device.setMac(deviceQueryDetails.getMacAddress());
-        device.setProtocol(Integer.valueOf(deviceQueryDetails.getProtocol()).intValue());
-        device.setSupportRemoteFacePhoto(Integer.valueOf(deviceQueryDetails.getSupportRemoteFacePhoto()).intValue());
-        device.setSupportRemoteFinger(Integer.valueOf(deviceQueryDetails.getSupportFinger()).intValue());
-        device.setSupportRemotePalmPrint(Integer.valueOf(deviceQueryDetails.getSupportRemotePalmPrint()).intValue());
+        device.setProtocol(Integer.valueOf(deviceQueryDetails.getProtocol()));
+        // 可见光人脸
+        device.setSupportRemoteFacePhoto(Integer.valueOf(deviceQueryDetails.getSupportRemoteFacePhoto()));
+        // 近红外人脸
+        device.setSupportRemoteNearInfraredFace(Integer.valueOf(deviceQueryDetails.getSupportRemoteFace()));
+        // 指纹
+        device.setSupportRemoteFinger(Integer.valueOf(deviceQueryDetails.getSupportRemoteFinger()));
+        // 掌纹
+        device.setSupportRemotePalmPrint(Integer.valueOf(deviceQueryDetails.getSupportRemotePalmPrint()));
         deviceService.updateById(device);
 
         logger.debug("DeviceInitProcessor：" + JSONObject.toJSON(deviceInit));

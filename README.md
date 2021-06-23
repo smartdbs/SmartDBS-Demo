@@ -29,10 +29,11 @@ Smart DBS配套demo演示地址：https://demo.zkclouds.com/
 │  │      │  │  └─com
 │  │      │  │      └─zkteco
 │  │      │  │          └─dbs
-│  │      │  │              ├─acc      --门禁模块 
+│  │      │  │              ├─acc      --门禁模块
 │  │      │  │              ├─att      --考勤模块
 │  │      │  │              ├─company  --企业模块
 │  │      │  │              ├─device   --设备模块
+│  │      │  │              ├─icc      --人证模块
 │  │      │  │              ├─receiver --数据推送模块
 │  │      │  │              └─system   --系统信息模块
 │  │      │  └─resources
@@ -41,6 +42,7 @@ Smart DBS配套demo演示地址：https://demo.zkclouds.com/
 │  │      │      │  ├─att              --考勤业务 
 │  │      │      │  ├─company          --企业业务
 │  │      │      │  └─device           --设备业务
+│  │      │      │  └─icc              --人证业务
 │  │      │      └─zk-i18n             --国际化 
 │  │      └─test
 │  └─smart-dbs-demo-startup            --工程启动模块

@@ -107,4 +107,8 @@ public class EmployeeEnrollmentDTO {
      */
     private String validCount;
 
+    /**
+     * 是否启用人证功能
+     */
+    private Boolean iccFunOn;
 }

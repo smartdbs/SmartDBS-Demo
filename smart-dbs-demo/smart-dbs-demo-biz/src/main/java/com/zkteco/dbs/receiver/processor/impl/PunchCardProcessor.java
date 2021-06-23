@@ -66,7 +66,7 @@ public class PunchCardProcessor implements DataProcessor {
             String employeeId = Optional.ofNullable(employeeService.getByCompanyIdAndEmployeeNo(company.getId(),
                     punchCard.getEmployeeNo(), null)).map(Employee::getId).orElse(null);
             if (employeeId == null) {
-                ResultUtil.handldErrorInfo("E19", null);
+                ResultUtil.handleErrorInfo("E19", null);
             }
             EmployeeEnrollment employeeEnrollment = employeeEnrollmentService.getByCompanyIdAndEmployeeId(company.getId(), employeeId);
             if (ObjectUtil.isEmpty(employeeEnrollment.getPushTimeStamp()) || (employeeEnrollment.getPushTimeStamp() < punchCard

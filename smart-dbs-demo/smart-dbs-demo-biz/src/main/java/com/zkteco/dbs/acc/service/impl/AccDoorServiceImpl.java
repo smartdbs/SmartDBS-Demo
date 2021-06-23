@@ -110,7 +110,7 @@ public class AccDoorServiceImpl extends ServiceImpl<AccDoorMapper, AccDoor> impl
         DeviceDTO deviceDTO = dto.getPayload();
         AccDoor accDoor = this.getById(deviceDTO.getId());
 
-        ResultUtil.handldNullError(accDoor, "E24", dto.getLang());
+        ResultUtil.handleNullError(accDoor, "E24", dto.getLang());
 
         accDoor.setDoorName(deviceDTO.getDoorName());
 
@@ -136,7 +136,7 @@ public class AccDoorServiceImpl extends ServiceImpl<AccDoorMapper, AccDoor> impl
 
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
 
-        ResultUtil.handldNullError(accDoor, "E24", dto.getLang());
+        ResultUtil.handleNullError(accDoor, "E24", dto.getLang());
         // 调用SDK 远程开门
         User apiUser = new User(company.getUserName(), company.getPassword());
         OpenDoorRequest openDoorRequest = new OpenDoorRequest(accDoor.getSn());

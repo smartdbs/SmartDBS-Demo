@@ -63,10 +63,10 @@ public class Device extends BaseModel<Device> {
     private Integer status;
 
     /**
-     * 设备类型(0:考勤设备 1:门禁设备)
+     * 设备类型(0:考勤设备 1:门禁设备 2:人证设备)
      */
     @TableField
-    @ColumnComment("设备类型(0:考勤设备 1:门禁设备)")
+    @ColumnComment("设备类型(0:考勤设备 1:门禁设备 2:人证设备)")
     @ColumnType(length = 1)
     private Integer type;
 
@@ -138,6 +138,15 @@ public class Device extends BaseModel<Device> {
     @ColumnType(length = 1)
     @DefaultValue("0")
     private Integer supportRemoteFacePhoto;
+
+    /**
+     * 是否支持远程登记可见光人脸，0 不支持，1支持，2未知
+     */
+    @TableField
+    @ColumnComment("是否支持远程登记近红外人脸，0 不支持，1支持，2未知")
+    @ColumnType(length = 1)
+    @DefaultValue("0")
+    private Integer supportRemoteNearInfraredFace;
 
     /**
      * 是否支持远程登记指纹，0 不支持，1支持，2未知

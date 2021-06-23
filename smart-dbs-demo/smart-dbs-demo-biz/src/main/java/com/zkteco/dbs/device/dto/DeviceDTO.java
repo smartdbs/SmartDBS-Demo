@@ -68,6 +68,11 @@ public class DeviceDTO extends BaseQueryVO implements Serializable {
     private Integer supportRemoteFacePhoto;
 
     /**
+     * 是否支持远程登记近红外人脸，0 不支持，1支持，2未知
+     */
+    private Integer supportRemoteNearInfraredFace;
+
+    /**
      * 是否支持远程登记指纹，0 不支持，1支持，2未知
      */
     private Integer supportRemoteFinger;
@@ -76,4 +81,14 @@ public class DeviceDTO extends BaseQueryVO implements Serializable {
      * 是否支持远程登记掌纹，0 不支持，1支持，2未知
      */
     private Integer supportRemotePalmPrint;
+
+    /**
+     * 企业集成账号
+     */
+    private String account;
+
+    /**
+     * 集成账号密码
+     */
+    private String password;
 }

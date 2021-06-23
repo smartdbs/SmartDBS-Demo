@@ -87,7 +87,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         String companyId = company.getId();
 
         Employee employee = this.getById(id);
-        ResultUtil.handldNullError(employee, "E19", vo.getLang());
+        ResultUtil.handleNullError(employee, "E19", vo.getLang());
 
         // 删除人员与设备关系
         deviceEmployeeService.removeByEmployeeNo(companyId, employee.getEmployeeNo());

@@ -24,7 +24,14 @@
         e.formatted_name ,
         e.company_id,
         e.avatar,
-        ee.card_no ,
+        e.id_card as idCard,
+        e.temporary_status as temporaryStatus,
+        e.allow_status as allowStatus,
+        e.start_time as startTime,
+        e.end_time as endTime,
+        e.valid_count as validCount,
+        e.icc_fun_on as iccFunOn,
+        ee.card_no,
         ee.device_password ,
         ee.device_permission
 

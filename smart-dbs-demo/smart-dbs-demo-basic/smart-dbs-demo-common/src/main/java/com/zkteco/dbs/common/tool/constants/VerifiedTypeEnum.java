@@ -136,6 +136,26 @@ public enum VerifiedTypeEnum {
      */
     VERIFIED_TYPE29(29, "verifiedType29"),
     /**
+     * 仅身份证
+     */
+    VERIFIED_TYPE30(30, "verifiedType30"),
+    /**
+     * 身份证加人脸
+     */
+    VERIFIED_TYPE31(31, "verifiedType31"),
+    /**
+     * 身份证加人脸加可信
+     */
+    VERIFIED_TYPE32(32, "verifiedType32"),
+    /**
+     * 身份证加指纹加人脸
+     */
+    VERIFIED_TYPE33(33, "verifiedType33"),
+    /**
+     * 仅可信认证
+     */
+    VERIFIED_TYPE34(34, "verifiedType34"),
+    /**
      * 其他
      */
     VERIFIED_TYPE200(200, "verifiedType200");

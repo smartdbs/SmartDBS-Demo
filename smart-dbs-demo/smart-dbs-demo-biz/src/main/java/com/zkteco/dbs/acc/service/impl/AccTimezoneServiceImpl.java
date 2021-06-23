@@ -140,7 +140,7 @@ public class AccTimezoneServiceImpl extends ServiceImpl<AccTimezoneMapper, AccTi
         AccTimezone accTimezone = dto.getPayload();
 
         AccTimezone oldAccTimezone = this.getById(accTimezone.getTimezoneNum());
-        ResultUtil.handldNullError(oldAccTimezone, "E26", dto.getLang());
+        ResultUtil.handleNullError(oldAccTimezone, "E26", dto.getLang());
 
         oldAccTimezone.setTimezoneName(accTimezone.getTimezoneName());
         this.updateById(oldAccTimezone);

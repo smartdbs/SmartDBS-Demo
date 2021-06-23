@@ -1,5 +1,8 @@
 package com.zkteco.dbs.common.utils;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
+import cn.hutool.extra.qrcode.QrConfig;
 import com.zkteco.dbs.common.tool.constants.FileTypeEnum;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -10,6 +13,8 @@ import java.io.InputStream;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.zkteco.dbs.common.tool.constants.SysConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,7 +42,7 @@ public class FileUploadUtil {
     private String basicPath;
 
     public String upload(MultipartFile file, String type, String lang) {
-        ResultUtil.handldNullError(file, "E25", lang);
+        ResultUtil.handleNullError(file, "E25", lang);
 
         //获取业务对应二级目录
         String path = SECOND_PATH + FileTypeEnum.getPathByType(type);
@@ -46,7 +51,7 @@ public class FileUploadUtil {
                 .substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         if (!FILE_FORMAT.toUpperCase().contains(suffix.toUpperCase())) {
             // 图片格式不符合
-            ResultUtil.handldErrorInfo("E22", lang);
+            ResultUtil.handleErrorInfo("E22", lang);
         }
 
         //创建文件夹
@@ -65,7 +70,7 @@ public class FileUploadUtil {
         } catch (Exception e) {
             e.printStackTrace();
             // 保存文件异常
-            ResultUtil.handldErrorInfo("E08", lang);
+            ResultUtil.handleErrorInfo("E08", lang);
         }
 
         String filePath = path + filename;
@@ -97,7 +102,7 @@ public class FileUploadUtil {
             // 对字节数组Base64编码
             return encode(outStream.toByteArray());
         } catch (Exception e) {
-            ResultUtil.handldErrorInfo("E10", lang);
+            ResultUtil.handleErrorInfo("E10", lang);
         } finally {
             if (is != null) {
                 try {
@@ -129,4 +134,24 @@ public class FileUploadUtil {
         return m.replaceAll("");
     }
 
+    public String generateQRCode(String content) {
+        try {
+            QrConfig qrConfig = new QrConfig();
+            //获取业务对应二级目录
+            String path = SECOND_PATH + FileTypeEnum.IMAGE.getPath();
+
+            File file = new File(basicPath + path + SysConstants.QR_CODE_NAME);
+            if(!file.getParentFile().exists()){
+                file.getParentFile().mkdirs();
+            }
+            if(!file.exists()){
+                file.createNewFile();
+            }
+            QrCodeUtil.generate(content, qrConfig, FileUtil.file(file.getPath()));
+            return path + SysConstants.QR_CODE_NAME;
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -57,7 +57,7 @@ public class DeviceUpgradeServiceImpl implements DeviceUpgradeService {
     public List<NewFwVersion> newestList(BaseDTO<DeviceUpgradeDTO> dto) {
         DeviceUpgradeDTO deviceUpgradeDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(deviceUpgradeDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(deviceUpgradeDTO.getSn(), "E11", dto.getLang());
         DBSApi.dbsClient.getClientProfile().setLanguage(Language.getByLang(dto.getLang()));
         //调用SDK获取设备的升级版本号列表
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
@@ -74,12 +74,12 @@ public class DeviceUpgradeServiceImpl implements DeviceUpgradeService {
     public Map<String, String> upgrade(BaseDTO<DeviceUpgradeDTO> dto) {
         DeviceUpgradeDTO deviceUpgradeDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(deviceUpgradeDTO.getSn(), "E11", dto.getLang());
-        ResultUtil.handldBlankError(deviceUpgradeDTO.getVersion(), "E34", dto.getLang());
+        ResultUtil.handleBlankError(deviceUpgradeDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(deviceUpgradeDTO.getVersion(), "E34", dto.getLang());
         //判断设备是否已经存在
         Device device = deviceService.getOne(new LambdaQueryWrapper<Device>().eq(Device::getSn, deviceUpgradeDTO.getSn()));
         if (device == null) {
-            ResultUtil.handldErrorInfo("E16", null);
+            ResultUtil.handleErrorInfo("E16", null);
         }
         DBSApi.dbsClient.getClientProfile().setLanguage(Language.getByLang(dto.getLang()));
         //调用SDK升级设备固件
@@ -99,7 +99,7 @@ public class DeviceUpgradeServiceImpl implements DeviceUpgradeService {
     public List<DeviceUpgradeHistoryResponse> historyList(BaseDTO<DeviceUpgradeDTO> dto) {
         DeviceUpgradeDTO deviceUpgradeDTO = dto.getPayload();
         //检查参数是否合法
-        ResultUtil.handldBlankError(deviceUpgradeDTO.getSn(), "E11", dto.getLang());
+        ResultUtil.handleBlankError(deviceUpgradeDTO.getSn(), "E11", dto.getLang());
         DBSApi.dbsClient.getClientProfile().setLanguage(Language.getByLang(dto.getLang()));
         //调用SDK查询设备升级历史
         Company company = companyService.getByAppKey(dbsConfig.getAppKey());
