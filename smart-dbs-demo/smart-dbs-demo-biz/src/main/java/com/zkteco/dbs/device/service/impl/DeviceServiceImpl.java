@@ -223,6 +223,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void reboot(BaseDTO<DeviceDTO> dto) {
+        //获取sn
         String sn = dto.getPayload().getSn();
         //检查参数是否合法
         ResultUtil.handleBlankError(sn, "E11", dto.getLang());
